@@ -1,0 +1,73 @@
+* { box-sizing: border-box; }
+:root {
+  --bg:#0f172a; --fg:#e2e8f0; --muted:#94a3b8;
+  --card:#111827; --border:#334155;
+  --accent:#60a5fa; --accent2:#22d3ee;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--fg);
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(96,165,250,.25), transparent 60%),
+    radial-gradient(900px 500px at 120% 10%, rgba(34,211,238,.2), transparent 60%),
+    var(--bg);
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/*Make the simple page look like a card*/
+body > h2, body > p, body > form, body > img, body > div {
+  max-width: 720px;
+}
+body > h2 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: .2px;
+}
+body > p {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+/*Avatar image*/
+img[alt="Profile"] {
+  display: block;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+
+/*Buttons (logout)*/
+button {
+  appearance: none;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color: #0b1220;
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  box-shadow: 0 6px 18px rgba(34,211,238,.25);
+}
+button:hover { transform: translateY(-1px); filter: brightness(1.03); }
+button:active { transform: translateY(0); filter: brightness(.98); }
+
+/*No Avatar placeholder box*/
+body > div {
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+  margin: 0 auto 16px;
+}
+
+/*Small screens*/
+@media (max-width: 420px) {
+  body { padding: 20px 12px; }
+  body > h2 { font-size: 22px; }
+}
