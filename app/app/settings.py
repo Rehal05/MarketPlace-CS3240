@@ -87,7 +87,10 @@ INSTALLED_APPS = [
     "helloworld",
     'accounts',
     'profiles',
+    'users',
 ]
+
+AUTH_USER_MODEL = 'users.customUser'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
