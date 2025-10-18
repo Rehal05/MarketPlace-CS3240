@@ -1,0 +1,30 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>User Directory</title>
+</head>
+<body>
+  <h2>All Users</h2>
+
+  <p><a href="{% url 'dashboard' %}">Back to dashboard</a></p>
+
+  {% if users %}
+    <ul>
+      {% for user in users %}
+        <li>
+          <strong>{{ user.username }}</strong>
+          {% if user.email %}<span>({{ user.email }})</span>{% endif %}
+          {% if user.user_type %}
+            <span>- {{ user.get_user_type_display }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No users found.</p>
+  {% endif %}
+</body>
+</html>
