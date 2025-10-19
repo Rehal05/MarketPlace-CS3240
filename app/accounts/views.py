@@ -11,5 +11,9 @@ def signup_view(request):
             login(request, user) # auto login
             return redirect("/dashboard/")
     else:
-        form = SignUpForm()
+        initial = {}
+        if 'social_email' in request.session:
+            initial['email'] = request.session['social_email']
+            request.session.pop('social_email', None)
+        form = SignUpForm(initial=initial)
     return render(request, "signup.html", {"form": form})

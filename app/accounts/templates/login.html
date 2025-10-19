@@ -18,6 +18,9 @@
 
   <p>No account yet? <a href="{% url 'signup' %}">Create one</a></p>
 
+  {% load socialaccount %}
+  <a href="{% provider_login_url 'google' %}">Sign in with Google</a>
+
   <p><a href="{% url 'admin:index' %}">Go to Admin</a></p>
 </body>
 </html>
