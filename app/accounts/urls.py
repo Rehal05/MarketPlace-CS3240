@@ -1,10 +1,12 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from .views import admin_dashboard, admin_user_list
 
 urlpatterns = [
     path("login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("signup/", views.signup_view, name="signup"), 
-    path("admin/users/", views.admin_user_list, name="admin-user-list"),
+    path("admin/users/", views.admin_user_list, name="user_list"),
+    path("admin/dashboard/", admin_dashboard, name = "admin_dashboard"),
 ]
