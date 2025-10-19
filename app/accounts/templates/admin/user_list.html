@@ -1,4 +1,4 @@
-{% load static %}
+{% load static tz %}
 <link rel="stylesheet" href="{% static 'login.css' %}">
 
 <html>
@@ -19,6 +19,9 @@
           {% if user.email %}<span>({{ user.email }})</span>{% endif %}
           {% if user.user_type %}
             <span>- {{ user.get_user_type_display }}</span>
+          {% endif %}
+          {% if user.last_login %}
+            <br><span>- Last login: {{ user.last_login|timezone:"US/Eastern"|date:"M d, Y h:i A" }}</span>
           {% endif %}
         </li>
       {% endfor %}
