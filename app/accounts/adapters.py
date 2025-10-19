@@ -11,8 +11,22 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
         return False
 
     def pre_social_login(self, request, sociallogin):
-        # Prefill email from Google
+        # get email and  picture from Google
         if sociallogin.account.provider == 'google':
             email = sociallogin.account.extra_data.get('email')
+            picture = sociallogin.account.extra_data.get('picture')
             if email:
                 request.session['social_email'] = email
+            if picture:
+                request.session['social_picture'] = picture
+
+    def populate_user(self, request, sociallogin, data):
+        user = super().populate_user(request, sociallogin, data)
+        
+        # Save the profile picture URL
+        if sociallogin.account.provider == 'google':
+            picture = sociallogin.account.extra_data.get('picture')
+            if picture:
+                user.profile_pic = picture
+        
+        return user
