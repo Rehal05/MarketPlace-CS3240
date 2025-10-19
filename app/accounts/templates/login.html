@@ -48,12 +48,12 @@
       }
 
       updateLink();
-      
+
       if (!window.location.search) {
         if (isProfile) {
           window.location.search = '?next=/dashboard/';
         } else {
-          window.location.search = '?next=/accounts/admin/dashboard/';
+          window.location.search = '?next=/accounts/moderator/dashboard/';
         }
       }
 
@@ -64,7 +64,7 @@
         if (isProfile) {
           window.location.search = '?next=/dashboard/';
         } else {
-          window.location.search = '?next=/accounts/admin/dashboard/';
+          window.location.search = '?next=/accounts/moderator/dashboard/';
         }
       });
 
