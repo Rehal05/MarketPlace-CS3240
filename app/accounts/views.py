@@ -8,7 +8,7 @@ def signup_view(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save() # create user
-            login(request, user) # auto login
+            login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend') # auto login
             return redirect("/dashboard/")
     else:
         initial = {}
