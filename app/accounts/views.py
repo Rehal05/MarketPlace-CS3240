@@ -1,4 +1,4 @@
-_# accounts/views.py
+# accounts/views.py
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
