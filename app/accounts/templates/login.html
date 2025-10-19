@@ -2,12 +2,17 @@
 <link rel="stylesheet" href="{% static 'login.css' %}">
 
 <html>
-<head><meta charset="utf-8"><title>Login</title></head>
+
+<head>
+  <meta charset="utf-8">
+  <title>Login</title>
+</head>
+
 <body>
   <h2>Login</h2>
 
   {% if form.errors %}
-    <p style="color:red;">Invalid username or password.</p>
+  <p style="color:red;">Invalid username or password.</p>
   {% endif %}
 
   <!-- <form method="post">
@@ -21,6 +26,52 @@
   {% load socialaccount %}
   <a href="{% provider_login_url 'google' %}">Sign in with Google</a>
 
-  <p><a href="{% url 'admin:index' %}">Go to Admin</a></p>
+  <p><a id="toggle-link">Switch to Moderator Dashboard</a></p>
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+      const link = document.getElementById('toggle-link');
+      const titleLine = document.querySelector('h2');
+
+      let isProfile = localStorage.getItem('dashboardMode') !== 'moderator'; // default true if not 'moderator'
+
+      function updateLink() {
+        if (isProfile) {
+          link.textContent = 'Switch to Moderator Dashboard';
+          titleLine.textContent = 'Login to Profile';
+        } else {
+          link.textContent = 'Switch to Profile';
+          titleLine.textContent = 'Login to Moderator Dashboard';
+        }
+      }
+
+      updateLink();
+
+      if (!window.location.search) {
+        if (isProfile) {
+          window.location.search = '?next=/dashboard/';
+        } else {
+          window.location.search = '?next=/accounts/moderator/dashboard/';
+        }
+      }
+
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        isProfile = !isProfile;
+        localStorage.setItem('dashboardMode', isProfile ? 'profile' : 'moderator');
+        if (isProfile) {
+          window.location.search = '?next=/dashboard/';
+        } else {
+          window.location.search = '?next=/accounts/moderator/dashboard/';
+        }
+      });
+
+    });
+
+  </script>
+
 </body>
+
 </html>
