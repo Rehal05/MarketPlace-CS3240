@@ -18,11 +18,10 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 from django.contrib.auth import urls as auth_urls
-from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path("accounts/", include("accounts.urls")),# login, log out
+    path("accounts/", include("accounts.urls")),# login, log out
     path('accounts/', include('allauth.urls')),
     path('accounts/', include(auth_urls)),
     path("", include("profiles.urls")),# user profiles

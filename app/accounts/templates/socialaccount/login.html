@@ -1,0 +1,39 @@
+{% load socialaccount %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signing in...</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+    </style>
+</head>
+<body>
+    <p>Redirecting to Google...</p>
+    
+    <form method="post" id="autosubmit">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <noscript>
+            <button type="submit">Continue</button>
+        </noscript>
+    </form>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('autosubmit');
+            if (form) {
+                form.submit();
+            }
+        });
+        
+        setTimeout(function() {
+            var form = document.getElementById('autosubmit');
+            if (form && !form.submitted) {
+                form.submitted = true;
+                form.submit();
+            }
+        }, 100);
+    </script>
+</body>
+</html>
