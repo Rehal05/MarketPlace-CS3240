@@ -4,11 +4,11 @@ from django.urls import reverse
 
 class MyAccountAdapter(DefaultAccountAdapter):
     def get_signup_redirect_url(self, request):
-        return reverse('signup')
+        return '/dashboard/'
 
 class MySocialAccountAdapter(DefaultSocialAccountAdapter):
     def is_auto_signup_allowed(self, request, sociallogin):
-        return False
+        return True
 
     def pre_social_login(self, request, sociallogin):
         # get email and  picture from Google
@@ -30,3 +30,7 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
                 user.profile_pic = picture
         
         return user
+    
+    def get_signup_redirect_url(self, request, sociallogin):
+        # Redirect to dashboard after google auth
+        return '/dashboard/'
