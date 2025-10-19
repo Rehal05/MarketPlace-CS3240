@@ -16,7 +16,7 @@ class customUser(AbstractUser):
     )
 
     bio = models.TextField(blank=True, null=True) #optional text field for short description
-    profile_pic = models.ImageField(upload_to='profiles/', blank=True, null=True) #optimal image field for a profile picture
+    profile_pic = models.URLField(blank=True, null=True) #URL to profile picture from Google
 
     def __str__(self):
         return self.username

@@ -7,6 +7,6 @@ def dashboard(request):
     context = {
         "username": user.username,
         "signup_date": user.date_joined,
-        "profile_image_url": "", # placeholder
+        "profile_image_url": user.profile_pic,
     }
     return render(request, "profiles.html", context)

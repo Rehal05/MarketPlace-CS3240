@@ -8,8 +8,7 @@ User = get_user_model()
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
     bio = forms.CharField(widget=forms.Textarea, required=False)
-    profile_pic = forms.ImageField(required=False)
 
     class Meta:
         model = User
-        fields = ["username", "email", "password1", "password2", "bio", "profile_pic"]
+        fields = ["username", "email", "password1", "password2", "bio"]
