@@ -28,4 +28,4 @@ def admin_user_list(request):
         raise PermissionDenied 
 
     users = get_user_model().objects.all().order_by("username") # fetch all users
-    return render(request, "admin/user_list.html", {"users": users}) # render template with users
+    return render(request, "admin/dashboard.html", {"users": users}) # render template with users
