@@ -23,6 +23,9 @@
           {% if user.last_login %}
             <br><span>- Last login: {{ user.last_login|timezone:"US/Eastern"|date:"M d, Y h:i A" }}</span>
           {% endif %}
+          {% if not user.is_superuser %}
+            <span class="verified-badge">✓ Email Verified</span>
+          {% endif %}
         </li>
       {% endfor %}
     </ul>
