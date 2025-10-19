@@ -284,3 +284,5 @@ SOCIALACCOUNT_PROVIDERS = {
         'REDIRECT_URI_PROTOCOL': 'http' # Use 'http' for development if needed
     }
 }
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
