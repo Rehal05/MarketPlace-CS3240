@@ -286,3 +286,12 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = True 
+
+CSRF_COOKIE_SAMESITE = 'None' 
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = ['https://swe-a019-cfb8f9b538ca.herokuapp.com/', 'https://accounts.google.com', 'http://localhost:8000', 'http://127.0.0.1:8000']
