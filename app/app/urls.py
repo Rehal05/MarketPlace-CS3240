@@ -26,4 +26,5 @@ urlpatterns = [
     path('accounts/', include(auth_urls)),
     path("", include("profiles.urls")),# user profiles
     path("", RedirectView.as_view(url="/dashboard/", permanent=False)),
+    path('messages/', include(('message.urls', 'message'), namespace='message')),
 ]

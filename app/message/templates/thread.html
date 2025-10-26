@@ -1,0 +1,33 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'chat.css' %}">
+
+<div class="chat">
+  <div class="chat-header">
+    <a class="back" href="{% url 'message:list' %}">← Messages</a>
+    <div class="avatar">{{ other.username|first|upper }}</div>
+    <div class="name">{{ other.username }}</div>
+  </div>
+
+  <div class="chat-body">
+
+    {% for m in messages %}
+      <div class="msg {% if m.sender_id == request.user.id %}me{% else %}other{% endif %}">
+        {{ m.content }}
+        <span class="meta">
+          {{ m.sender.username }} · {{ m.timestamp|date:"m-d H:i" }}
+        </span>
+      </div>
+    {% empty %}
+      <p class="day">No messages yet. Say hi!</p>
+    {% endfor %}
+  </div>
+
+
+  <div class="chat-input">
+    <form method="post">
+      {% csrf_token %}
+      <input type="text" name="content" placeholder="Type a message..." autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>

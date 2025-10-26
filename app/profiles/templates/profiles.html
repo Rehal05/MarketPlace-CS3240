@@ -17,6 +17,17 @@
 
   <form method="post" action="{% url 'logout' %}">
   {% csrf_token %}
+
+  {% if request.user.is_authenticated %}
+    <p>
+      <a href="{% url 'message:list' %}"
+        style="display:inline-block;padding:8px 12px;border:1px solid #333;border-radius:6px;text-decoration:none;">
+        Messages
+      </a>
+    </p>
+  {% endif %}
+
+
   <button type="submit">Logout</button>
 </form>
 
