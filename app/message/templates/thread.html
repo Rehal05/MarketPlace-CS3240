@@ -1,20 +1,33 @@
-<h2>Chat with {{ other.username }}</h2>
+{% load static %}
+<link rel="stylesheet" href="{% static 'chat.css' %}">
 
-<div style="border:1px solid #ccc; padding:10px; height:320px; overflow-y:auto;">
-  {% for m in messages %}
-    <div style="margin:6px 0; {% if m.sender_id == request.user.id %}text-align:right;{% endif %}">
-      <b>{{ m.sender.username }}:</b> {{ m.content }}
-      <small style="color:#666;">{{ m.timestamp|date:"m-d H:i" }}</small>
-    </div>
-  {% empty %}
-    <p>No messages yet. Say hi!</p>
-  {% endfor %}
+<div class="chat">
+  <div class="chat-header">
+    <a class="back" href="{% url 'message:list' %}">← Messages</a>
+    <div class="avatar">{{ other.username|first|upper }}</div>
+    <div class="name">{{ other.username }}</div>
+  </div>
+
+  <div class="chat-body">
+
+    {% for m in messages %}
+      <div class="msg {% if m.sender_id == request.user.id %}me{% else %}other{% endif %}">
+        {{ m.content }}
+        <span class="meta">
+          {{ m.sender.username }} · {{ m.timestamp|date:"m-d H:i" }}
+        </span>
+      </div>
+    {% empty %}
+      <p class="day">No messages yet. Say hi!</p>
+    {% endfor %}
+  </div>
+
+
+  <div class="chat-input">
+    <form method="post">
+      {% csrf_token %}
+      <input type="text" name="content" placeholder="Type a message..." autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
 </div>
-
-<form method="post" style="margin-top:10px;">
-  {% csrf_token %}
-  <input name="content" placeholder="Type a message..." style="width:75%;" />
-  <button type="submit">Send</button>
-</form>
-
-<p><a href="{% url 'message:list' %}">← Back to conversations</a></p>

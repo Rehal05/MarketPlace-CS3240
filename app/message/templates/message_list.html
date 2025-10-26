@@ -1,12 +1,21 @@
 {% load static %}
-<h2>Messages</h2>
+<link rel="stylesheet" href="{% static 'chat_list.css' %}">
 
-<ul>
-  {% for u in contacts %}
-    <li>
-      <a href="{% url 'message:thread' u.id %}">{{ u.username }}</a>
-    </li>
-  {% empty %}
-    <li>No users found.</li>
-  {% endfor %}
-</ul>
+<div class="sidebar">
+  <div class="sidebar-header">Messages</div>
+  <div class="contact-list">
+    {% for c in contacts %}
+      <a class="contact" href="{% url 'message:thread' c.id %}">
+        <div class="avatar">{{ c.username|first|upper }}</div>
+        <div class="name">{{ c.username }}</div>
+      </a>
+    {% empty %}
+      <p style="padding: 15px;">No contacts yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="chat-preview">
+  <h2>Select a conversation</h2>
+  <p>Choose a contact from the left to start messaging.</p>
+</div>
