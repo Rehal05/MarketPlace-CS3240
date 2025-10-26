@@ -4,7 +4,7 @@
 <ul>
   {% for u in contacts %}
     <li>
-      <a href="{% url 'dm:thread' u.id %}">{{ u.username }}</a>
+      <a href="{% url 'message:thread' u.id %}">{{ u.username }}</a>
     </li>
   {% empty %}
     <li>No users found.</li>

@@ -20,7 +20,7 @@ def message_list(request):
         # no chats yet -> show everyone (except yourself)
         contacts = User.objects.exclude(id=user.id).order_by('username')
 
-    return render(request, 'message/message_list.html', {'contacts': contacts})
+    return render(request, 'message_list.html', {'contacts': contacts})
 
 @login_required
 def message_thread(request, user_id):
@@ -41,4 +41,4 @@ def message_thread(request, user_id):
             Message.objects.create(sender=user, receiver=other, content=content)
         return redirect('message:thread', user_id=other.id)
 
-    return render(request, 'message/thread.html', {'other': other, 'messages': msgs})
+    return render(request, 'thread.html', {'other': other, 'messages': msgs})
