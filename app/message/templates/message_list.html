@@ -1,0 +1,12 @@
+{% load static %}
+<h2>Messages</h2>
+
+<ul>
+  {% for u in contacts %}
+    <li>
+      <a href="{% url 'dm:thread' u.id %}">{{ u.username }}</a>
+    </li>
+  {% empty %}
+    <li>No users found.</li>
+  {% endfor %}
+</ul>

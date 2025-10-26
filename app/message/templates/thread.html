@@ -1,0 +1,20 @@
+<h2>Chat with {{ other.username }}</h2>
+
+<div style="border:1px solid #ccc; padding:10px; height:320px; overflow-y:auto;">
+  {% for m in messages %}
+    <div style="margin:6px 0; {{ 'text-align:right;' if m.sender_id == request.user.id }}">
+      <b>{{ m.sender.username }}:</b> {{ m.content }}
+      <small style="color:#666;">{{ m.timestamp|date:"m-d H:i" }}</small>
+    </div>
+  {% empty %}
+    <p>No messages yet. Say hi!</p>
+  {% endfor %}
+</div>
+
+<form method="post" style="margin-top:10px;">
+  {% csrf_token %}
+  <input name="content" placeholder="Type a message..." style="width:75%;" />
+  <button type="submit">Send</button>
+</form>
+
+<p><a href="{% url 'dm:list' %}">← Back to conversations</a></p>
