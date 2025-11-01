@@ -1,0 +1,220 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'feed.css' %}">
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0f172a;
+  --fg: #e2e8f0;
+  --muted: #94a3b8;
+  --card: #0b1220;
+  --panel: #111827;
+  --border: #334155;
+  --accent: #60a5fa;
+  --accent2: #22d3ee;
+  --error: #fca5a5;
+}
+
+/* ─────────────── Base layout ─────────────── */
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(1100px 600px at -10% -20%, rgba(96,165,250,.25), transparent 60%),
+    radial-gradient(900px 500px at 120% 0%, rgba(34,211,238,.2), transparent 60%),
+    var(--bg);
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+}
+
+/* ─────────────── Wrapper ─────────────── */
+.wrapper {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* ─────────────── Heading ─────────────── */
+h1 {
+  font-size: 32px;
+  text-align: center;
+  margin: 0 0 1.5rem;
+  color: var(--fg);
+}
+
+/* ─────────────── Grid & Card ─────────────── */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(148,163,184,.05), transparent 40%), var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  display: flex;
+  flex-direction: column;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(34,211,238,.25);
+}
+
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background: var(--card);
+}
+
+/* ─────────────── Card content ─────────────── */
+.card-content {
+  padding: 1rem 1.25rem 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--fg);
+}
+
+.desc {
+  font-size: 0.9rem;
+  color: var(--muted);
+  flex: 1;
+}
+
+.price {
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 0.4rem;
+}
+
+/* ─────────────── Pagination ─────────────── */
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.pagination a,
+.pagination span {
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--fg);
+  font-size: 0.85rem;
+  transition: all 0.15s ease;
+}
+
+.pagination a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pagination .active {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color: #0b1220;
+  font-weight: 700;
+}
+
+/* ─────────────── Error & Badge (optional) ─────────────── */
+p[style*="color:red"] {
+  color: var(--error) !important;
+  background: rgba(239,68,68,.12);
+  border: 1px solid rgba(239,68,68,.35);
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.verified-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  background-color: #10b981;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+}
+
+  </style>
+  <div class="wrapper">
+    <h1>Feed</h1>
+
+    <div class="grid">
+      {% for post in page_obj %}
+        <div class="card">
+          {% if post.image_url %}
+            <img src="{{ post.image_url }}" alt="{{ post.title }}">
+          {% else %}
+            <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
+          {% endif %}
+          <div class="card-content">
+            <div class="title">{{ post.title }}</div>
+            <div class="desc">
+              {{ post.description|truncatechars:150 }}
+            </div>
+            <div class="price">
+              {{ post.price_display }}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>No posts yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">Prev</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span class="active">{{ num }}</span>
+          {% else %}
+            <a href="?page={{ num }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
