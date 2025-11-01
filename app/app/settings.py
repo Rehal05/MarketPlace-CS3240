@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     
     'message',
+    'feedapp',
 ]
 
 AUTH_USER_MODEL = 'accounts.customUser'
