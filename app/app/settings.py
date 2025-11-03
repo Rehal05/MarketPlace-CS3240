@@ -289,3 +289,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# Security settings
+X_FRAME_OPTIONS = 'SAMEORIGIN'

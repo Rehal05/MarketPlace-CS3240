@@ -26,7 +26,7 @@
   {% load socialaccount %}
   <a href="{% provider_login_url 'google' %}">Sign in with Google</a>
 
-  <p><a id="toggle-link">Switch to Moderator Dashboard</a></p>
+  <p><a id="toggle-link">Switch to Moderator</a></p>
 
   <script>
 
@@ -39,11 +39,11 @@
 
       function updateLink() {
         if (isProfile) {
-          link.textContent = 'Switch to Moderator Dashboard';
-          titleLine.textContent = 'Login to Profile';
+          link.textContent = 'Switch to Moderator';
+          titleLine.textContent = 'Login to Dashboard';
         } else {
-          link.textContent = 'Switch to Profile';
-          titleLine.textContent = 'Login to Moderator Dashboard';
+          link.textContent = 'Switch to Dashboard';
+          titleLine.textContent = 'Login to Moderator';
         }
       }
 
