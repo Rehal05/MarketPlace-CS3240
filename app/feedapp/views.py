@@ -18,9 +18,11 @@ def new_post_view(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            post = form.save()
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
             messages.success(request, 'Post created successfully!')
-            return redirect('feed')
+            return redirect('dashboard')
     else:
         form = PostForm()
     

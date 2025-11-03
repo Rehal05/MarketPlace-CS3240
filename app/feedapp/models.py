@@ -1,9 +1,15 @@
 from django.db import models
+from django.conf import settings
 
 class Post(models.Model):
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='posts'
+    )
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='uploads/', blank=True, null=True)
-    image_url = models.URLField(blank=True)  # Keep for backward compatibility
+    image_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
     price_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
