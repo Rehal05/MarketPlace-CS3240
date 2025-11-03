@@ -31,6 +31,9 @@
       <!-- Right: Action Buttons -->
       <div class="actions-section">
         {% if request.user.is_authenticated %}
+          <a href="{% url 'newpost' %}" class="btn btn-create">
+            ➕ New Post
+          </a>
           <a href="{% url 'message:list' %}" class="btn btn-messages">
             💬 Messages
           </a>

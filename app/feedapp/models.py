@@ -2,7 +2,8 @@ from django.db import models
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
-    image_url = models.URLField(blank=True)
+    image = models.ImageField(upload_to='uploads/', blank=True, null=True)
+    image_url = models.URLField(blank=True)  # Keep for backward compatibility
     description = models.TextField(blank=True)
     price_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -13,6 +14,12 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_image_url(self):
+        """Return the image URL, preferring uploaded image over image_url field"""
+        if self.image:
+            return self.image.url
+        return self.image_url
 
     def price_display(self):
         if self.price_min is not None and self.price_max is not None:
