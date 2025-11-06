@@ -34,9 +34,8 @@
           <a href="{% url 'newpost' %}" class="btn btn-create">
             ➕ New Post
           </a>
-          <a href="{% url 'message:list' %}" class="btn btn-messages">
-            💬 Messages
-          </a>
+          <a href="#" class="btn btn-messages" onclick="changeIframe('{% url 'feed' %}')">📄 Feed</a>
+          <a href="#" class="btn btn-messages" onclick="changeIframe('{% url 'message:list' %}')">💬 Messages</a>
         {% endif %}
         <form method="post" action="{% url 'logout' %}" class="logout-form">
           {% csrf_token %}
@@ -50,5 +49,11 @@
   <div class="feed-container">
     <iframe src="{% url 'feed' %}" class="feed-iframe" title="Feed"></iframe>
   </div>
+
+  <script>
+    function changeIframe(url) {
+      document.querySelector('.feed-iframe').src = url;
+    }
+  </script>
 </body>
 </html>
