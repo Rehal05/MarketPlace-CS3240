@@ -76,6 +76,9 @@ h1 {
   display: flex;
   flex-direction: column;
   transition: transform .15s ease, box-shadow .15s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 
 .card:hover {
@@ -115,6 +118,12 @@ h1 {
   font-weight: 600;
   color: var(--accent);
   margin-top: 0.4rem;
+}
+
+.author {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
 }
 
 /* ─────────────── Pagination ─────────────── */
@@ -175,14 +184,15 @@ p[style*="color:red"] {
 
     <div class="grid">
       {% for post in page_obj %}
-        <div class="card">
-          {% if post.image_url %}
-            <img src="{{ post.image_url }}" alt="{{ post.title }}">
+        <a href="{% url 'message:thread' post.author.id %}" class="card">
+          {% if post.get_image_url %}
+            <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
           {% else %}
             <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
           {% endif %}
           <div class="card-content">
             <div class="title">{{ post.title }}</div>
+            <div class="author">by {{ post.author.username }}</div>
             <div class="desc">
               {{ post.description|truncatechars:150 }}
             </div>
@@ -190,7 +200,7 @@ p[style*="color:red"] {
               {{ post.price_display }}
             </div>
           </div>
-        </div>
+        </a>
       {% empty %}
         <p>No posts yet.</p>
       {% endfor %}

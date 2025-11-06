@@ -1,86 +1,267 @@
-* { box-sizing: border-box; }
-:root {
-  --bg:#0f172a; --fg:#e2e8f0; --muted:#94a3b8;
-  --card:#111827; --border:#334155;
-  --accent:#60a5fa; --accent2:#22d3ee;
+* { 
+  box-sizing: border-box; 
 }
-html, body { height: 100%; }
-body {
+
+:root {
+  --bg: #0f172a;
+  --fg: #e2e8f0;
+  --muted: #94a3b8;
+  --card: #111827;
+  --border: #334155;
+  --accent: #60a5fa;
+  --accent2: #22d3ee;
+}
+
+html, body {
+  height: 100%;
   margin: 0;
+  padding: 0;
+}
+
+body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--fg);
   background:
     radial-gradient(1200px 600px at 20% -10%, rgba(96,165,250,.25), transparent 60%),
     radial-gradient(900px 500px at 120% 10%, rgba(34,211,238,.2), transparent 60%),
     var(--bg);
-  display: grid;
-  place-items: center;
-  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
   line-height: 1.5;
-  text-align: center;
 }
 
-/*Make the simple page look like a card*/
-body > h2, body > p, body > form, body > img, body > div {
-  max-width: 720px;
-}
-body > h2 {
-  margin: 0 0 8px;
-  font-size: 28px;
-  letter-spacing: .2px;
-}
-body > p {
-  margin: 0 0 20px;
-  color: var(--muted);
+/* ─────────────── Top Navigation Bar ─────────────── */
+.topbar {
+  background: linear-gradient(180deg, rgba(20, 30, 48, 0.95), rgba(15, 23, 42, 0.92));
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  height: auto;
+  padding: 0;
 }
 
-/*Avatar image*/
-img[alt="Profile"] {
-  display: block;
-  margin: 0 auto 16px;
+.topbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  gap: 20px;
+}
+
+/* Profile Section (Left side) */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.avatar-container {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid var(--accent);
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid var(--border);
-  box-shadow: 0 8px 24px rgba(0,0,0,.35);
-}
-
-/*Buttons (logout)*/
-button {
-  appearance: none;
-  border: none;
-  border-radius: 12px;
-  padding: 10px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
   color: #0b1220;
-  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
-  box-shadow: 0 6px 18px rgba(34,211,238,.25);
-}
-button:hover { transform: translateY(-1px); filter: brightness(1.03); }
-button:active { transform: translateY(0); filter: brightness(.98); }
-
-/*No Avatar placeholder box*/
-body > div {
-  box-shadow: 0 6px 18px rgba(0,0,0,.35);
-  margin: 0 auto 16px;
+  font-size: 10px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/*Small screens*/
-@media (max-width: 420px) {
-  body { padding: 20px 12px; }
-  body > h2 { font-size: 22px; }
+.profile-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-/*Verified badge*/
+.profile-info h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .verified-badge {
   display: inline-block;
-  margin-left: 8px;
+  width: fit-content;
   padding: 2px 6px;
   background-color: #10b981;
   color: #fff;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 6px;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Actions Section (Right side) */
+.actions-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logout-form {
+  margin: 0;
+  padding: 0;
+}
+
+/* ─────────────── Buttons ─────────────── */
+.btn {
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.btn-create {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.15));
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.btn-create:hover {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.25));
+  border-color: rgba(16, 185, 129, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-create:active {
+  transform: translateY(0);
+}
+
+.btn-messages {
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.2), rgba(34, 211, 238, 0.15));
+  color: var(--accent);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+}
+
+.btn-messages:hover {
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.3), rgba(34, 211, 238, 0.25));
+  border-color: rgba(96, 165, 250, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-messages:active {
+  transform: translateY(0);
+}
+
+.btn-logout {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color: #0b1220;
+  border: none;
+  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.25);
+}
+
+.btn-logout:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 6px 16px rgba(34, 211, 238, 0.35);
+}
+
+.btn-logout:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+/* ─────────────── Feed Container ─────────────── */
+.feed-container {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.feed-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* ─────────────── Responsive Design ─────────────── */
+@media (max-width: 768px) {
+  .topbar-content {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .profile-info h2 {
+    font-size: 14px;
+  }
+
+  .verified-badge {
+    font-size: 10px;
+  }
+
+  .btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar-content {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+  }
+
+  .profile-section {
+    order: 1;
+    flex-basis: 100%;
+  }
+
+  .actions-section {
+    order: 2;
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+
+  .avatar-container {
+    width: 40px;
+    height: 40px;
+  }
+
+  .profile-info h2 {
+    font-size: 13px;
+  }
+
+  .btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
 }

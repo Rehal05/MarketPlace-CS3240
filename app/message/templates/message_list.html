@@ -5,17 +5,14 @@
   <div class="sidebar-header">Messages</div>
   <div class="contact-list">
     {% for c in contacts %}
-      <a class="contact" href="{% url 'message:thread' c.id %}">
+      <div class="contact" onclick="document.getElementById('chat-iframe').src='{% url 'message:thread' c.id %}'">
         <div class="avatar">{{ c.username|first|upper }}</div>
         <div class="name">{{ c.username }}</div>
-      </a>
+      </div>
     {% empty %}
       <p style="padding: 15px;">No contacts yet.</p>
     {% endfor %}
   </div>
 </div>
 
-<div class="chat-preview">
-  <h2>Select a conversation</h2>
-  <p>Choose a contact from the left to start messaging.</p>
-</div>
+<iframe id="chat-iframe" src="{% url 'message:preview' %}" style="flex: 1; border: none;"></iframe>

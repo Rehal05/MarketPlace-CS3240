@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create New Listing</title>
+  <link rel="stylesheet" href="{% static 'newpost.css' %}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="{% url 'dashboard' %}" class="back-btn">← Back to Dashboard</a>
+      <h1>Create New Listing</h1>
+    </div>
+
+    <div class="form-card">
+      <form method="post" enctype="multipart/form-data" class="post-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <div class="error">{{ form.title.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.image.id_for_label }}">{{ form.image.label }}</label>
+          <div class="file-upload-wrapper">
+            {{ form.image }}
+            <div class="file-upload-info">
+              <span class="file-icon">📁</span>
+              <span class="file-text">Choose an image file</span>
+            </div>
+          </div>
+          <small class="help-text">Upload an image for your post (JPG, PNG, etc.)</small>
+          {% if form.image.errors %}
+            <div class="error">{{ form.image.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <div class="error">{{ form.description.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="{{ form.price_min.id_for_label }}">{{ form.price_min.label }}</label>
+            {{ form.price_min }}
+            {% if form.price_min.errors %}
+              <div class="error">{{ form.price_min.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.price_max.id_for_label }}">{{ form.price_max.label }}</label>
+            {{ form.price_max }}
+            {% if form.price_max.errors %}
+              <div class="error">{{ form.price_max.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if form.non_field_errors %}
+          <div class="error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <span class="btn-icon">✓</span>
+            Create Post
+          </button>
+          <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const fileInput = document.querySelector('input[type="file"]');
+      const fileText = document.querySelector('.file-text');
+      
+      if (fileInput && fileText) {
+        fileInput.addEventListener('change', function(e) {
+          if (e.target.files.length > 0) {
+            fileText.textContent = e.target.files[0].name;
+          } else {
+            fileText.textContent = 'Choose an image file';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

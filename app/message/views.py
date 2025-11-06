@@ -42,3 +42,7 @@ def message_thread(request, user_id):
         return redirect('message:thread', user_id=other.id)
 
     return render(request, 'thread.html', {'other': other, 'messages': msgs})
+
+@login_required
+def message_preview(request):
+    return render(request, 'message_preview.html')
