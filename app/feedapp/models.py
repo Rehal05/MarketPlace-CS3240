@@ -57,3 +57,39 @@ class Post(models.Model):
         self.available = False
         self.save()
 
+class Rating(models.Model):
+    """Store individual ratings given between users."""
+    rater = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='ratings_given'
+    )
+
+    rated = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete= models.CASCADE,
+        related_name='ratings_received'
+    )
+
+    post= models.ForeignKey(
+        Post, 
+        on_delete=models.CASCADE,
+        related_name='ratings',
+        null=True,
+        blank=True
+    )
+    score= models.DecimalField(max_digits=3, decimal_places=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('rater', 'rated', 'post')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.rater} rated {self.rated}({self.score})"
+    
+    @staticmethod
+    def get_user_average(user):
+        """Compute average rating for a user"""
+        result = Rating.objects.filter(rated=user).aggregate(avg=Avg('score'))
+        return round(result['avg'], 1) if result['avg'] else None
