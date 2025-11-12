@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rate {{ rated_user.username }}</title>
+    <link rel="stylesheet" href="{% static 'feed.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Rate {{ rated_user.username }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.score.label_tag }}
+                {{ form.score }}
+            </div>
+            <button type="submit" class="btn">Submit Rating</button>
+        </form>
+    </div>
+</body>
+</html>

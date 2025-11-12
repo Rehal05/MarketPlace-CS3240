@@ -53,6 +53,25 @@ def mark_sold_review(request, post_id, buyer_id):
     messages.success(request, f"Marked as sold to {buyer.username}.")
     return redirect('my_listings')
 
+@login_required
+def edit_post_view(request, post_id):
+    post = get_object_or_404(Post, id=post_id, author=request.user)
+    
+    if request.method == 'POST':
+        if not post.available:
+            messages.error(request, "Cannot edit a sold/unavailable post.")
+        
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Post updated successfully!')
+            return redirect('my_listings')
+    else:
+        form = PostForm(instance=post)
+    
+    return render(request, 'edit_post.html', {'form': form, 'post': post})
+
+
 #Rating Functionality
 class RatingForm(forms.ModelForm):
     class Meta:

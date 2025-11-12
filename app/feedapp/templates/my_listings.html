@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Listings</title>
+    <link rel="stylesheet" href="{% static 'feed.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+    <h1>My Listings</h1>
+
+    <div class="grid">
+        {% for post in posts %}
+        <div class="card">
+            {% if post.get_image_url %}
+            <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
+            {% endif %}
+            <div class="card-content">
+            <div class="title">{{ post.title }}</div>
+            <div class="desc">{{ post.description|truncatechars:150 }}</div>
+            <div class="price">{{ post.price_display }}</div>
+
+            {% if post.available %}
+                <a href="{% url 'edit_post' post.id %}" class="btn">✏️ Edit</a>
+                <a href="{% url 'toggle_availability' post.id %}" class="btn">🚫 Mark Unavailable</a>
+            {% else %}
+                <span style="color: red;">Unavailable</span>
+                <a href="{% url 'toggle_availability' post.id %}" class="btn">✅ Make Available</a>
+            {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p>You have not posted anything yet.</p>
+        {% endfor %}
+    </div>
+    </div>
+</body>
+</html>
