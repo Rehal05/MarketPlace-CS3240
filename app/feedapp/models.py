@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Avg
 
 class Post(models.Model):
     author = models.ForeignKey(
@@ -14,6 +15,15 @@ class Post(models.Model):
     price_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    available = models.BooleanField(default=True)
+    sold_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='purchases'
+    )
 
     class Meta:
         ordering = ['-created_at']  # newest first
@@ -35,3 +45,15 @@ class Post(models.Model):
         if self.price_max is not None:
             return f"up to ${self.price_max}"
         return "Price on request"
+    
+    def mark_unavailable(self):
+        """Mark listing as unavailable (instead of deleting)."""
+        self.available = False
+        self.save()
+    
+    def mark_sold(self, buyer):
+        """Mark listing as sold to a user."""
+        self.sold_to = buyer
+        self.available = False
+        self.save()
+
