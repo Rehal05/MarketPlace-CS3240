@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Post - {{ post.title }}</title>
+    <link rel="stylesheet" href="{% static 'feed.css' %}">
+</head>
+<body>
+    <style>
+        /* Style all input fields and textareas in forms */
+        form input[type="text"],
+        form input[type="number"],
+        form input[type="file"],
+        form textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            margin: 0.5rem 0 1rem 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* Textarea specific styling */
+        form textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        /* Style the submit button */
+        form .btn {
+            background-color: #4b2e83; /* purple matching your theme */
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form .btn:hover {
+            background-color: #6a46b3; /* slightly lighter purple on hover */
+        }
+
+    </style>
+    <div class="wrapper">
+        <h1>Edit Post - {{ post.title }}</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if post.image %}
+                <p>Current Image:</p>
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:200px;">
+            {% elif post.image_url %}
+                <p>Current Image URL: <a href="{{ post.image_url }}">{{ post.image_url }}</a></p>
+            {% endif %}
+
+            {{ form.as_p }}
+            <button type="submit" class="btn">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>

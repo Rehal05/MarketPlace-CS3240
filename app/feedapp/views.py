@@ -42,6 +42,7 @@ def toggle_availability_view(request, post_id):
     post.available = not post.available
     post.save()
     messages.success(request, f"Listing marked as { 'available' if post.available else 'unavailable'}.")
+    return redirect('my_listings')
 
 @login_required
 def mark_sold_review(request, post_id, buyer_id):

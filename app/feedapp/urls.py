@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import feed_view, new_post_view, my_listings_view, toggle_availability_view, mark_sold_review, rate_user_view, edit_post_view
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', feed_view, name='feed'),
@@ -14,4 +16,4 @@ urlpatterns = [
 
     #Rating Functionality
     path('rate/<int:user_id>/<int:post_id>/', rate_user_view, name='rate_user'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

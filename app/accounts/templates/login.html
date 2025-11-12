@@ -2,7 +2,6 @@
 <link rel="stylesheet" href="{% static 'login.css' %}">
 
 <html>
-
 <head>
   <meta charset="utf-8">
   <title>Login</title>
@@ -12,30 +11,37 @@
   <h2>Login</h2>
 
   {% if form.errors %}
-  <p style="color:red;">Invalid username or password.</p>
+    <p style="color:red;">Invalid username or password.</p>
   {% endif %}
 
-  <!-- <form method="post">
+  <!-- ============================================= -->
+  <!-- ENABLE THIS FORM FOR LOCAL SUPERUSER LOGIN -->
+  <!-- ============================================= -->
+  <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Sign in</button>
-  </form> -->
+  </form>
+  <!-- ============================================= -->
 
-  <!-- <p>No account yet? <a href="{% url 'signup' %}">Create one</a></p> -->
+  <!-- ============================================= -->
+  <!-- OPTIONAL: Signup link -->
+  <p>No account yet? <a href="{% url 'signup' %}">Create one</a></p>
+  <!-- ============================================= -->
 
-  {% load socialaccount %}
-  <a href="{% provider_login_url 'google' %}">Sign in with Google</a>
+  <!-- ============================================= -->
+  <!-- COMMENT OUT SOCIAL LOGIN TO AVOID CRASH 
+  {# {% load socialaccount %} #}
+  {# <a href="{% provider_login_url 'google' %}">Sign in with Google</a> #} -->
+  <!-- ============================================= -->
 
   <p><a id="toggle-link">Switch to Moderator</a></p>
 
   <script>
-
     document.addEventListener('DOMContentLoaded', function () {
-
       const link = document.getElementById('toggle-link');
       const titleLine = document.querySelector('h2');
-
-      let isProfile = localStorage.getItem('dashboardMode') !== 'moderator'; // default true if not 'moderator'
+      let isProfile = localStorage.getItem('dashboardMode') !== 'moderator';
 
       function updateLink() {
         if (isProfile) {
@@ -67,11 +73,7 @@
           window.location.search = '?next=/accounts/moderator/dashboard/';
         }
       });
-
     });
-
   </script>
-
 </body>
-
 </html>
