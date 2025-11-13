@@ -24,56 +24,68 @@
         .btn:hover {
             background-color: #357ABD;
         }
+
+        /* Optional: show last review text nicely */
+        .last-review {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
     </style>
     <div class="wrapper">
-    <h1>My Listings</h1>
+        <h1>My Listings</h1>
 
-    <h2>Listings I Created</h2>
-    <div class="grid">
-        {% for post in my_created_posts %}
-        <div class="card">
-            {% if post.get_image_url %}
-                <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
-            {% endif %}
-            <div class="card-content">
-                <div class="title">{{ post.title }}</div>
-                <div class="desc">{{ post.description|truncatechars:150 }}</div>
-                <div class="price">{{ post.price_display }}</div>
-
-                {% if post.available %}
-                    <a href="{% url 'edit_post' post.id %}" class="btn">✏️ Edit</a>
-                    <a href="{% url 'toggle_availability' post.id %}" class="btn">🚫 Mark Unavailable</a>
-                {% else %}
-                    <span style="color: red;">Unavailable</span>
-                    <a href="{% url 'toggle_availability' post.id %}" class="btn">✅ Make Available</a>
+        <h2>Listings I Created</h2>
+        <div class="grid">
+            {% for post in my_created_posts %}
+            <div class="card">
+                {% if post.get_image_url %}
+                    <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
                 {% endif %}
+                <div class="card-content">
+                    <div class="title">{{ post.title }}</div>
+                    <div class="desc">{{ post.description|truncatechars:150 }}</div>
+                    <div class="price">{{ post.price_display }}</div>
+
+                    {% if post.available %}
+                        <a href="{% url 'edit_post' post.id %}" class="btn">✏️ Edit</a>
+                        <a href="{% url 'toggle_availability' post.id %}" class="btn">🚫 Mark Unavailable</a>
+                    {% else %}
+                        <span style="color: red;">Unavailable</span>
+                        <a href="{% url 'toggle_availability' post.id %}" class="btn">✅ Make Available</a>
+                    {% endif %}
+                </div>
             </div>
+            {% empty %}
+            <p>You haven’t created any listings yet.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p>You haven’t created any listings yet.</p>
-        {% endfor %}
-    </div>
 
-    <h2>Purchased Listings</h2>
-    <div class="grid">
-        {% for post in my_purchased_posts %}
-        <div class="card">
-            {% if post.get_image_url %}
-                <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
-            {% endif %}
-            <div class="card-content">
-                <div class="title">{{ post.title }}</div>
-                <div class="desc">{{ post.description|truncatechars:150 }}</div>
-                <div class="price">{{ post.price_display }}</div>
+        <h2>Purchased Listings</h2>
+        <div class="grid">
+            {% for post in my_purchased_posts %}
+            <div class="card">
+                {% if post.get_image_url %}
+                    <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
+                {% endif %}
+                <div class="card-content">
+                    <div class="title">{{ post.title }}</div>
+                    <div class="desc">{{ post.description|truncatechars:150 }}</div>
+                    <div class="price">{{ post.price_display }}</div>
 
-                <a href="{% url 'rate_user' post.author.id post.id %}" class="btn">⭐ Leave Review</a>
+                    {% if post.user_rating %}
+                        <span class="last-review">Last Review: {{ post.user_rating }}/10</span>
+                        <a href="{% url 'rate_user' post.author.id post.id %}" class="btn">✏️ Edit Review</a>
+                    {% else %}
+                        <a href="{% url 'rate_user' post.author.id post.id %}" class="btn">⭐ Leave Review</a>
+                    {% endif %}
+                </div>
             </div>
+            {% empty %}
+            <p>You haven’t purchased any listings yet.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p>You haven’t purchased any listings yet.</p>
-        {% endfor %}
     </div>
-</div>
-
 </body>
 </html>
