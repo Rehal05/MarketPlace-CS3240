@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Avg
 from .models import Post, Rating
+from django.db.models import Q
 from .forms import PostForm
 from django import forms
 
@@ -33,8 +34,16 @@ def new_post_view(request):
 #My Listings Page 
 @login_required
 def my_listings_view(request):
-    my_posts = Post.objects.filter(author=request.user)
-    return render(request, 'my_listings.html', {'posts': my_posts})
+    #only show posts that you created or purchased
+    my_created_posts = Post.objects.filter(author=request.user)
+    my_purchased_posts = Post.objects.filter(sold_to=request.user)
+    
+    context = {
+        'my_created_posts': my_created_posts,
+        'my_purchased_posts': my_purchased_posts,
+    }
+
+    return render(request, 'my_listings.html', context)
 
 @login_required
 def toggle_availability_view(request, post_id):

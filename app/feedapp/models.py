@@ -17,6 +17,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     available = models.BooleanField(default=True)
+
+    #track who the item was sold to 
     sold_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
