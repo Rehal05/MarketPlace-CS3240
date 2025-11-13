@@ -24,6 +24,11 @@
         </div>
         <div class="profile-info">
           <h2>@{{ username }}</h2>
+          {% if avg_rating %}
+            <span class="avg-rating">⭐ {{ avg_rating }}/10</span>
+          {% else %}
+            <span class="avg-rating">⭐ No ratings yet</span>
+          {% endif %}
           <span class="verified-badge">✓ Email Verified</span>
         </div>
       </div>
