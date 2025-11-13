@@ -45,6 +45,7 @@
                     <a href="{% url 'toggle_availability' post.id %}" class="btn">🚫 Mark Unavailable</a>
                 {% else %}
                     <span style="color: red;">Unavailable</span>
+                    <a href="{% url 'toggle_availability' post.id %}" class="btn">✅ Make Available</a>
                 {% endif %}
             </div>
         </div>
@@ -53,7 +54,7 @@
         {% endfor %}
     </div>
 
-    <h2>Listings I Purchased / Sold To Me</h2>
+    <h2>Purchased Listings</h2>
     <div class="grid">
         {% for post in my_purchased_posts %}
         <div class="card">
