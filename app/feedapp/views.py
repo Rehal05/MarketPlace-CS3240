@@ -38,6 +38,10 @@ def my_listings_view(request):
     my_created_posts = Post.objects.filter(author=request.user)
     my_purchased_posts = Post.objects.filter(sold_to=request.user)
     
+    #attach the user's rating (if it exists) to each post
+    for post in my_purchased_posts:
+        rating = Rating.objects.filter(rater=request.user, rated=post.author, post=post).first()
+        post.user_rating = rating.score if rating else None
     context = {
         'my_created_posts': my_created_posts,
         'my_purchased_posts': my_purchased_posts,
