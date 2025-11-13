@@ -28,30 +28,51 @@
     <div class="wrapper">
     <h1>My Listings</h1>
 
+    <h2>Listings I Created</h2>
     <div class="grid">
-        {% for post in posts %}
+        {% for post in my_created_posts %}
         <div class="card">
             {% if post.get_image_url %}
-            <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
+                <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
             {% endif %}
             <div class="card-content">
-            <div class="title">{{ post.title }}</div>
-            <div class="desc">{{ post.description|truncatechars:150 }}</div>
-            <div class="price">{{ post.price_display }}</div>
+                <div class="title">{{ post.title }}</div>
+                <div class="desc">{{ post.description|truncatechars:150 }}</div>
+                <div class="price">{{ post.price_display }}</div>
 
-            {% if post.available %}
-                <a href="{% url 'edit_post' post.id %}" class="btn">✏️ Edit</a>
-                <a href="{% url 'toggle_availability' post.id %}" class="btn">🚫 Mark Unavailable</a>
-            {% else %}
-                <span style="color: red;">Unavailable</span>
-                <a href="{% url 'toggle_availability' post.id %}" class="btn">✅ Make Available</a>
-            {% endif %}
+                {% if post.available %}
+                    <a href="{% url 'edit_post' post.id %}" class="btn">✏️ Edit</a>
+                    <a href="{% url 'toggle_availability' post.id %}" class="btn">🚫 Mark Unavailable</a>
+                {% else %}
+                    <span style="color: red;">Unavailable</span>
+                {% endif %}
             </div>
         </div>
         {% empty %}
-        <p>You have not posted anything yet.</p>
+        <p>You haven’t created any listings yet.</p>
         {% endfor %}
     </div>
+
+    <h2>Listings I Purchased / Sold To Me</h2>
+    <div class="grid">
+        {% for post in my_purchased_posts %}
+        <div class="card">
+            {% if post.get_image_url %}
+                <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
+            {% endif %}
+            <div class="card-content">
+                <div class="title">{{ post.title }}</div>
+                <div class="desc">{{ post.description|truncatechars:150 }}</div>
+                <div class="price">{{ post.price_display }}</div>
+
+                <a href="{% url 'rate_user' post.author.id post.id %}" class="btn">⭐ Leave Review</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>You haven’t purchased any listings yet.</p>
+        {% endfor %}
     </div>
+</div>
+
 </body>
 </html>
