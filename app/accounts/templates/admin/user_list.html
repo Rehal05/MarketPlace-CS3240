@@ -26,6 +26,9 @@
           {% if not user.is_superuser %}
             <span class="verified-badge">✓ Email Verified</span>
           {% endif %}
+          <div style="margin-top:6px;">
+            <a href="{% url 'user_messages' user.id %}">View messages</a>
+          </div>
         </li>
       {% endfor %}
     </ul>

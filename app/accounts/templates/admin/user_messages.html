@@ -1,0 +1,69 @@
+{% load static tz %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Messages sent by {{ target_user.username }}</title>
+</head>
+<body>
+  <h2>Messages from {{ target_user.username }}</h2>
+
+  <p><a href="{% url 'user_list' %}">Back to user list</a></p>
+
+  {% if messages %}
+    <ul>
+      {% for m in messages %}
+        <li style="margin-bottom:12px;">
+          <div><strong>To:</strong> {{ m.receiver.username }}</div>
+          <div><strong>When:</strong> {{ m.timestamp|date:"M d, Y H:i" }}</div>
+          {% if m.content %}
+            <div><strong>Message:</strong> {{ m.content }}</div>
+          {% endif %}
+          {% if m.image_url %}
+            <div><strong>Image:</strong> <a href="{{ m.image_url }}" target="_blank">view</a></div>
+          {% endif %}
+          <div><strong>Read:</strong> {{ m.is_read }}</div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No messages from this user.</p>
+  {% endif %}
+</body>
+</html>
+
+{% load static tz %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Messages sent by {{ target_user.username }}</title>
+</head>
+<body>
+  <h2>Messages from {{ target_user.username }}</h2>
+
+  <p><a href="{% url 'user_list' %}">Back to user list</a></p>
+
+  {% if messages %}
+    <ul>
+      {% for m in messages %}
+        <li style="margin-bottom:12px;">
+          <div><strong>To:</strong> {{ m.receiver.username }}</div>
+          <div><strong>When:</strong> {{ m.timestamp|date:"M d, Y H:i" }}</div>
+          {% if m.content %}
+            <div><strong>Message:</strong> {{ m.content }}</div>
+          {% endif %}
+          {% if m.image_url %}
+            <div><strong>Image:</strong> <a href="{{ m.image_url }}" target="_blank">view</a></div>
+          {% endif %}
+          <div><strong>Read:</strong> {{ m.is_read }}</div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No messages from this user.</p>
+  {% endif %}
+</body>
+</html>

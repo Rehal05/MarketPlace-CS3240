@@ -1,7 +1,7 @@
 # accounts/views.py
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import PermissionDenied
 
 from .forms import SignUpForm
@@ -42,3 +42,17 @@ def admin_dashboard(request):
     users = get_user_model().objects.all().order_by("username") # fetch all users
     return render(request, "admin/dashboard.html", {"users": users}) # render template with users
 
+from message.models import Message  # noqa: E402 (module import after other code)
+
+@login_required
+def moderator_user_messages(request, user_id):
+    if not _is_admin_user(request.user):
+        raise PermissionDenied
+
+    target_user = get_object_or_404(get_user_model(), id=user_id)
+    msgs = Message.objects.filter(sender=target_user).select_related('receiver').order_by('timestamp')
+
+    return render(request, "admin/user_messages.html", {
+        "target_user": target_user,
+        "messages": msgs,
+    })
