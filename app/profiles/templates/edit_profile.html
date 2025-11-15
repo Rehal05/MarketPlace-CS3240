@@ -39,7 +39,7 @@
     </nav>
 
     <!-- main card -->
-    <main>
+    <main class="edit-main">
         <div class="edit-container">
             <h1 class="edit-title">Edit Profile</h1>
             <p class="edit-subtitle">
@@ -123,9 +123,15 @@
 
 
                 <div class="btn-row">
-                    <button type="submit" class="btn-primary">Save changes</button>
-                    <a href="{% url 'dashboard' %}" class="btn-secondary-link">Cancel</a>
-                </div>
+                  <button type="submit" class="btn btn-logout">
+                      Save changes
+                  </button>
+
+                  <a href="{% url 'dashboard' %}" class="btn btn-messages">
+                      Cancel
+                  </a>
+              </div>
+
             </form>
         </div>
     </main>
