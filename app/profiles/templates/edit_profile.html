@@ -8,7 +8,7 @@
     <!-- Reuse dashboard styles -->
     <link rel="stylesheet" href="{% static 'profiles.css' %}">
 </head>
-<body>
+<body class="dark">
 <div class="page-wrapper">
 
     <!-- top bar (same style as dashboard) -->
@@ -25,7 +25,12 @@
                     {% endif %}
                 </div>
                 <div class="profile-info">
-                    <h2>@{{ request.user.nickname|default:request.user.username }}</h2>
+                    {# Name Logic：nickname > Google full name #}
+                    {% with full_name=request.user.get_full_name %}
+                        <h2>
+                            @{{ request.user.nickname|default:full_name|default:request.user.username }}
+                        </h2>
+                    {% endwith %}
                     <span class="verified-badge">Editing profile</span>
                 </div>
             </div>
@@ -55,14 +60,25 @@
             <form method="post">
                 {% csrf_token %}
 
+                {# Nickname / handle #}
                 <div class="form-group">
-                    <label for="{{ form.nickname.id_for_label }}">Nickname</label>
+                    <label for="{{ form.nickname.id_for_label }}">Nickname / Handle</label>
                     {{ form.nickname }}
                     {% if form.nickname.errors %}
                         <div class="error-list">{{ form.nickname.errors }}</div>
                     {% endif %}
                 </div>
 
+                {# Sustainability interests #}
+                <div class="form-group">
+                    <label for="{{ form.sustainability_interests.id_for_label }}">Sustainability interests</label>
+                    {{ form.sustainability_interests }}
+                    {% if form.sustainability_interests.errors %}
+                        <div class="error-list">{{ form.sustainability_interests.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Short Bio#}
                 <div class="form-group">
                     <label for="{{ form.bio.id_for_label }}">Bio</label>
                     {{ form.bio }}
@@ -72,21 +88,23 @@
                 </div>
 
                 <div class="form-group">
-                  <label>Avatar</label>
-                  <div style="display:flex; align-items:center; gap:12px;">
-                      {% if request.user.profile_pic %}
-                          <img src="{{ request.user.profile_pic }}" alt="Profile" class="avatar" style="width:40px;height:40px;border-radius:999px;object-fit:cover;">
-                      {% else %}
-                          <div class="avatar-placeholder" style="width:40px;height:40px;border-radius:999px;background:#111827;display:flex;align-items:center;justify-content:center;font-size:12px;color:#9ca3af;">
-                              <span>{{ request.user.username|slice:":2"|upper }}</span>
-                          </div>
-                      {% endif %}
-                      <span style="font-size:12px;color:var(--muted);">
-                          Your avatar is synced from your Google account.
-                          To change it, update your Google profile photo.
-                      </span>
-                  </div>
-              </div>
+                    <label>Avatar</label>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        {% if request.user.profile_pic %}
+                            <img src="{{ request.user.profile_pic }}" alt="Profile" class="avatar"
+                                 style="width:40px;height:40px;border-radius:999px;object-fit:cover;">
+                        {% else %}
+                            <div class="avatar-placeholder"
+                                 style="width:40px;height:40px;border-radius:999px;background:#111827;display:flex;align-items:center;justify-content:center;font-size:12px;color:#9ca3af;">
+                                <span>{{ request.user.username|slice:":2"|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <small style="font-size:12px;color:var(--muted);">
+                            Your avatar is synced from your Google account.
+                            To change it, update your Google profile photo.
+                        </small>
+                    </div>
+                </div>
 
                 <!-- Venmo handle -->
                 <div class="form-group">
@@ -114,23 +132,22 @@
                     <label for="{{ form.other_payment_note.id_for_label }}">Other payment info</label>
                     {{ form.other_payment_note }}
                     <small style="font-size:11px;color:var(--muted);">
-                        e.g. Other Payment
+                        e.g. Other payment methods you want to share.
                     </small>
                     {% if form.other_payment_note.errors %}
                         <div class="error-list">{{ form.other_payment_note.errors }}</div>
                     {% endif %}
                 </div>
 
-
                 <div class="btn-row">
-                  <button type="submit" class="btn btn-logout">
-                      Save changes
-                  </button>
+                    <button type="submit" class="btn btn-logout">
+                        Save changes
+                    </button>
 
-                  <a href="{% url 'dashboard' %}" class="btn btn-messages">
-                      Cancel
-                  </a>
-              </div>
+                    <a href="{% url 'dashboard' %}" class="btn btn-messages">
+                        Cancel
+                    </a>
+                </div>
 
             </form>
         </div>
