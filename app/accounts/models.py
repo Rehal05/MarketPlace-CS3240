@@ -15,6 +15,7 @@ class customUser(AbstractUser):
         default='regular'
     )
 
+    nickname = models.CharField(max_length=50, blank=True, null=True) # Adding nickname in the model
     bio = models.TextField(blank=True, null=True) #optional text field for short description
     profile_pic = models.URLField(blank=True, null=True) #URL to profile picture from Google
 

@@ -1,0 +1,235 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Reuse dashboard styles -->
+    <link rel="stylesheet" href="{% static 'profiles.css' %}">
+
+    <style>
+        /* Extra styles for the edit page card */
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .edit-container {
+            max-width: 520px;
+            width: 100%;
+            margin: 32px auto;
+            padding: 24px 20px;
+            background-color: #020617;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+        }
+
+        .edit-title {
+            margin: 0 0 16px;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .edit-subtitle {
+            margin: 0 0 20px;
+            font-size: 13px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background-color: #020617;
+            color: var(--fg);
+            font-size: 13px;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .error-list {
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #fca5a5;
+        }
+
+        .btn-row {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            border-radius: 999px;
+            border: none;
+            padding: 9px 0;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            color: #0b1220;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary-link {
+            flex: 1;
+            border-radius: 999px;
+            padding: 9px 0;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--fg);
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        @media (max-width: 640px) {
+            .edit-container {
+                margin: 20px 14px 32px;
+                padding: 20px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+    <!-- top bar (same style as dashboard) -->
+    <nav class="topbar">
+        <div class="topbar-content">
+            <div class="profile-section">
+                <div class="avatar-container">
+                    {% if request.user.profile_pic %}
+                        <img src="{{ request.user.profile_pic }}" alt="Profile" class="avatar">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            <span>{{ request.user.username|slice:":2"|upper }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="profile-info">
+                    <h2>@{{ request.user.nickname|default:request.user.username }}</h2>
+                    <span class="verified-badge">Editing profile</span>
+                </div>
+            </div>
+
+            <div class="actions-section">
+                <a href="{% url 'dashboard' %}" class="btn btn-messages">
+                    ← Back
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- main card -->
+    <main>
+        <div class="edit-container">
+            <h1 class="edit-title">Edit Profile</h1>
+            <p class="edit-subtitle">
+                Update how other users see you on the site.
+            </p>
+
+            {% if form.non_field_errors %}
+                <div class="error-list">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.nickname.id_for_label }}">Nickname</label>
+                    {{ form.nickname }}
+                    {% if form.nickname.errors %}
+                        <div class="error-list">{{ form.nickname.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.bio.id_for_label }}">Bio</label>
+                    {{ form.bio }}
+                    {% if form.bio.errors %}
+                        <div class="error-list">{{ form.bio.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                  <label>Avatar</label>
+                  <div style="display:flex; align-items:center; gap:12px;">
+                      {% if request.user.profile_pic %}
+                          <img src="{{ request.user.profile_pic }}" alt="Profile" class="avatar" style="width:40px;height:40px;border-radius:999px;object-fit:cover;">
+                      {% else %}
+                          <div class="avatar-placeholder" style="width:40px;height:40px;border-radius:999px;background:#111827;display:flex;align-items:center;justify-content:center;font-size:12px;color:#9ca3af;">
+                              <span>{{ request.user.username|slice:":2"|upper }}</span>
+                          </div>
+                      {% endif %}
+                      <span style="font-size:12px;color:var(--muted);">
+                          Your avatar is synced from your Google account.
+                          To change it, update your Google profile photo.
+                      </span>
+                  </div>
+              </div>
+
+                {# Payment URLs – only show if they exist in the form #}
+                {% if form.venmo_url %}
+                    <div class="form-group">
+                        <label for="{{ form.venmo_url.id_for_label }}">Venmo URL</label>
+                        {{ form.venmo_url }}
+                        {% if form.venmo_url.errors %}
+                            <div class="error-list">{{ form.venmo_url.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if form.paypal_url %}
+                    <div class="form-group">
+                        <label for="{{ form.paypal_url.id_for_label }}">PayPal URL</label>
+                        {{ form.paypal_url }}
+                        {% if form.paypal_url.errors %}
+                            <div class="error-list">{{ form.paypal_url.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if form.other_payment_url %}
+                    <div class="form-group">
+                        <label for="{{ form.other_payment_url.id_for_label }}">Other payment link</label>
+                        {{ form.other_payment_url }}
+                        {% if form.other_payment_url.errors %}
+                            <div class="error-list">{{ form.other_payment_url.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <div class="btn-row">
+                    <button type="submit" class="btn-primary">Save changes</button>
+                    <a href="{% url 'dashboard' %}" class="btn-secondary-link">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

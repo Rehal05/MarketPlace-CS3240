@@ -12,21 +12,23 @@
   <nav class="topbar">
     <div class="topbar-content">
       <!-- Left: Profile Info -->
-      <div class="profile-section">
-        <div class="avatar-container">
-          {% if profile_image_url %}
-            <img src="{{ profile_image_url }}" alt="Profile" class="avatar">
-          {% else %}
-            <div class="avatar-placeholder">
-              <span>No Avatar</span>
-            </div>
-          {% endif %}
+     
+  <a href="{% url 'edit_profile' %}" class="profile-section" style="text-decoration:none; color:inherit;">
+    <div class="avatar-container">
+      {% if profile_image_url %}
+        <img src="{{ profile_image_url }}" alt="Profile" class="avatar">
+      {% else %}
+        <div class="avatar-placeholder">
+          <span>No Avatar</span>
         </div>
-        <div class="profile-info">
-          <h2>@{{ username }}</h2>
-          <span class="verified-badge">✓ Email Verified</span>
-        </div>
-      </div>
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <h2>@{{ request.user.nickname|default:username }}</h2>
+      <span class="verified-badge">✓ Email Verified</span>
+    </div>
+  </a>
+
 
       <!-- Right: Action Buttons -->
       <div class="actions-section">
