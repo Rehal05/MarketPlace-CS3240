@@ -122,7 +122,7 @@
               <div class="tool-actions" style="display: flex; flex-direction: column; gap: 0.4rem;">
 
                 <!-- Mark resolved -->
-                <form method="post" action="{% url 'admin_reported_listings' %}" class="inline-form">
+                <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
                   {% csrf_token %}
                   <input type="hidden" name="report_id" value="{{ report.id }}">
                   <input type="hidden" name="action" value="resolve">
@@ -132,7 +132,7 @@
                 </form>
 
                 <!-- Delist listing -->
-                <form method="post" action="{% url 'admin_reported_listings' %}" class="inline-form">
+                <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
                   {% csrf_token %}
                   <input type="hidden" name="report_id" value="{{ report.id }}">
                   <input type="hidden" name="action" value="delist">
@@ -142,7 +142,7 @@
                 </form>
 
                 <!-- Ban user (backend must decide who to ban, e.g. owner if added later) -->
-                <form method="post" action="{% url 'admin_reported_listings' %}" class="inline-form">
+                <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
                   {% csrf_token %}
                   <input type="hidden" name="report_id" value="{{ report.id }}">
                   <input type="hidden" name="action" value="ban_user">
