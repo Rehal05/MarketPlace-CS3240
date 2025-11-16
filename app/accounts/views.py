@@ -68,12 +68,7 @@ def admin_reports(request):
     if not _is_admin_user(request.user):
         raise PermissionDenied
 
-    reports = (
-        Report.objects
-        .select_related("post", "reported_by")
-        .order_by("-created_at")
-    )
-
+    # --- Handle actions first (POST) ---
     if request.method == "POST":
         report_id = request.POST.get("report_id")
         action = request.POST.get("action")
@@ -85,29 +80,46 @@ def admin_reports(request):
             report.save(update_fields=["status"])
 
         elif action == "delist":
-            # OPTION A (simplest): just delete the post.
-            # This will cascade-delete the report too (because of on_delete=models.CASCADE)
-            # so there is NO need to call report.save() afterward.
+            # Delete the post; cascade will delete its reports too.
             if report.post_id:
                 report.post.delete()
-            # Don't touch report.save() here.
+            # No report.save() here.
 
         elif action == "ban_user":
-            # You'll need a post.author if you want to ban the owner
+            # Example: ban the listing owner if you have an author field
             if hasattr(report.post, "author") and report.post.author:
                 user = report.post.author
                 user.is_active = False
                 user.save()
-            # Optionally also mark resolved:
             report.status = "resolved"
             report.save(update_fields=["status"])
 
         return redirect("admin_reports")
 
+    # --- Handle filtering (GET) ---
+    filter_value = request.GET.get("status", "open")
+
+    if filter_value == "resolved":
+        qs = Report.objects.filter(status="resolved")
+    elif filter_value == "all":
+        qs = Report.objects.all()
+    else:
+        # Default to open if unknown or missing
+        filter_value = "open"
+        qs = Report.objects.filter(status="open")
+
+    reports = (
+        qs.select_related("post", "reported_by")
+          .order_by("-created_at")
+    )
+
     return render(
         request,
         "admin/admin_reports.html",
-        {"reports": reports},
+        {
+            "reports": reports,
+            "active_filter": filter_value,
+        },
     )
 
 @login_required
