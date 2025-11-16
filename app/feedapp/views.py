@@ -2,6 +2,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from .models import Post, Report
+from .forms import PostForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
@@ -14,21 +15,42 @@ def feed_view(request):
     return render(request, 'feed.html', {'page_obj': page_obj})
 
 @login_required
-def report_post(request, pk):
-    post = get_object_or_404(Post, id=pk)
+def report_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
 
-    # Prevent multiple reports from same user on same post
-    existing = Report.objects.filter(post=post, reported_by=request.user, status="open")
-    if existing.exists():
-        messages.info(request, "You already reported this post.")
-        return redirect("feed")
+    if request.method == "POST":
+        reason = request.POST.get("reason", "").strip()
 
-    Report.objects.create(
-        post=post,
-        reported_by=request.user,
-        reason="Reported from feed view."
-    )
+        # Prevent spam: one open report per user+post
+        report, created = Report.objects.get_or_create(
+            post=post,
+            reported_by=request.user,
+            status="open",
+            defaults={"reason": reason}
+        )
 
-    messages.success(request, "Thanks! A moderator will review this post.")
+        # If they already reported, maybe update the reason
+        if not created and reason:
+            report.reason = reason
+            report.save()
+
+        messages.success(request, "Thanks, your report has been submitted.")
+        return redirect("feed")  # adjust to your feed URL name
+
+    # fallback for GET – just go back
     return redirect("feed")
 
+@login_required
+def new_post_view(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            messages.success(request, 'Post created successfully!')
+            return redirect('dashboard')
+    else:
+        form = PostForm()
+    
+    return render(request, 'newpost.html', {'form': form})
