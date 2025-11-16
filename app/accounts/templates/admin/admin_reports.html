@@ -1,0 +1,137 @@
+{% load static tz %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Reported Listings</title>
+  <link rel="stylesheet" href="{% static 'login.css' %}">
+</head>
+<body class="page moderator-dashboard-page">
+
+  <main class="content">
+
+    <!-- Simple top bar / header for this page -->
+    <header class="top-nav-bar">
+      <div class="nav-inner">
+        <div class="nav-left">
+          <span class="nav-title">Reported Listings</span>
+          <span class="nav-sub">
+            Review and act on listings that users have reported.
+          </span>
+        </div>
+
+        <nav class="nav-links">
+          <a href="/accounts/moderator/dashboard/" class="btn btn-secondary">
+            ← Back to Dashboard
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main card with reported listings -->
+    <section class="card">
+      <header class="card-header">
+        <h2 class="card-title">All Reported Listings</h2>
+        <p class="card-meta">
+          Listings from the feed that have been reported by users.
+        </p>
+      </header>
+
+      {% if reports %}
+        <ul class="tool-list">
+          {% for report in reports %}
+            <li class="tool-item reported-item">
+              <div class="tool-main">
+                <!-- Listing title + owner -->
+                <div class="tool-title">
+                  {{ report.listing.title }}
+                </div>
+
+                <div class="tool-description">
+                  {% if report.listing.description %}
+                    {{ report.listing.description }}
+                  {% else %}
+                    <em>No description provided for this listing.</em>
+                  {% endif %}
+                </div>
+
+                <div class="report-meta" style="margin-top: 0.35rem; font-size: 0.8rem; color: var(--muted);">
+                  <div>
+                    <strong>Reported by:</strong>
+                    {% if report.reported_by %}
+                      {{ report.reported_by.username }} ({{ report.reported_by.email }})
+                    {% else %}
+                      <em>Unknown reporter</em>
+                    {% endif %}
+                  </div>
+                  <div>
+                    <strong>Listing owner:</strong>
+                    {% if report.listing.owner %}
+                      {{ report.listing.owner.username }} ({{ report.listing.owner.email }})
+                    {% else %}
+                      <em>Unknown owner</em>
+                    {% endif %}
+                  </div>
+                  <div>
+                    <strong>Reported on:</strong>
+                    {% if report.created_at %}
+                      {{ report.created_at|timezone:"US/Eastern"|date:"M d, Y h:i A" }} (US/Eastern)
+                    {% else %}
+                      <em>Unknown time</em>
+                    {% endif %}
+                  </div>
+                  {% if report.reason %}
+                    <div style="margin-top: 0.25rem;">
+                      <strong>Reason:</strong>
+                      <span>{{ report.reason }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="tool-actions" style="display: flex; flex-direction: column; gap: 0.4rem;">
+
+                <!-- Mark resolved -->
+                <form method="post" action="{% url 'admin_reported_listings' %}" class="inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="report_id" value="{{ report.id }}">
+                  <input type="hidden" name="action" value="resolve">
+                  <button type="submit" class="btn btn-secondary" style="font-size: 0.78rem;">
+                    Mark Resolved
+                  </button>
+                </form>
+
+                <!-- Delist listing -->
+                <form method="post" action="{% url 'admin_reported_listings' %}" class="inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="report_id" value="{{ report.id }}">
+                  <input type="hidden" name="action" value="delist">
+                  <button type="submit" class="btn btn-secondary" style="font-size: 0.78rem;">
+                    Delist Listing
+                  </button>
+                </form>
+
+                <!-- Ban user -->
+                <form method="post" action="{% url 'admin_reported_listings' %}" class="inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="report_id" value="{{ report.id }}">
+                  <input type="hidden" name="action" value="ban_user">
+                  <button type="submit" class="btn btn-danger" style="font-size: 0.78rem;">
+                    Ban User
+                  </button>
+                </form>
+
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty-state">No reported listings at the moment. 🎉</p>
+      {% endif %}
+    </section>
+
+  </main>
+
+</body>
+</html>
