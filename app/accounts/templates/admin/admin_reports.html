@@ -42,19 +42,33 @@
           {% for report in reports %}
             <li class="tool-item reported-item">
               <div class="tool-main">
-                <!-- Listing title + owner -->
+
+                <!-- Post title -->
                 <div class="tool-title">
-                  {{ report.listing.title }}
+                  {{ report.post.title }}
                 </div>
 
+                <!-- Optional image -->
+                {% if report.post.image_url %}
+                  <div style="margin: 0.35rem 0;">
+                    <a href="{{ report.post.image_url }}" target="_blank">
+                      <img src="{{ report.post.image_url }}"
+                           alt="{{ report.post.title }}"
+                           style="max-width: 180px; border-radius: 8px; border: 1px solid rgba(51,65,85,0.8);">
+                    </a>
+                  </div>
+                {% endif %}
+
+                <!-- Post description -->
                 <div class="tool-description">
-                  {% if report.listing.description %}
-                    {{ report.listing.description }}
+                  {% if report.post.description %}
+                    {{ report.post.description }}
                   {% else %}
                     <em>No description provided for this listing.</em>
                   {% endif %}
                 </div>
 
+                <!-- Meta info -->
                 <div class="report-meta" style="margin-top: 0.35rem; font-size: 0.8rem; color: var(--muted);">
                   <div>
                     <strong>Reported by:</strong>
@@ -64,14 +78,16 @@
                       <em>Unknown reporter</em>
                     {% endif %}
                   </div>
+
                   <div>
-                    <strong>Listing owner:</strong>
-                    {% if report.listing.owner %}
-                      {{ report.listing.owner.username }} ({{ report.listing.owner.email }})
+                    <strong>Post created:</strong>
+                    {% if report.post.created_at %}
+                      {{ report.post.created_at|timezone:"US/Eastern"|date:"M d, Y h:i A" }} (US/Eastern)
                     {% else %}
-                      <em>Unknown owner</em>
+                      <em>Unknown time</em>
                     {% endif %}
                   </div>
+
                   <div>
                     <strong>Reported on:</strong>
                     {% if report.created_at %}
@@ -80,10 +96,23 @@
                       <em>Unknown time</em>
                     {% endif %}
                   </div>
+
+                  <div>
+                    <strong>Status:</strong>
+                    {{ report.get_status_display }}
+                  </div>
+
                   {% if report.reason %}
                     <div style="margin-top: 0.25rem;">
                       <strong>Reason:</strong>
                       <span>{{ report.reason }}</span>
+                    </div>
+                  {% endif %}
+
+                  {% if report.post.price_min or report.post.price_max %}
+                    <div style="margin-top: 0.25rem;">
+                      <strong>Price:</strong>
+                      {{ report.post.price_display }}
                     </div>
                   {% endif %}
                 </div>
@@ -112,7 +141,7 @@
                   </button>
                 </form>
 
-                <!-- Ban user -->
+                <!-- Ban user (backend must decide who to ban, e.g. owner if added later) -->
                 <form method="post" action="{% url 'admin_reported_listings' %}" class="inline-form">
                   {% csrf_token %}
                   <input type="hidden" name="report_id" value="{{ report.id }}">
