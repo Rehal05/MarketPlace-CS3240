@@ -8,7 +8,6 @@
 </head>
 <body class="page user-directory-page">
 
-
   <main class="content">
 
     <header class="top-nav-bar">
@@ -24,7 +23,6 @@
         </nav>
       </div>
     </header>
-
 
     {% if users %}
       <section class="card">
@@ -70,7 +68,7 @@
                 {% endif %}
               </div>
 
-              <div class="user-card-side">
+              <div class="user-card-side" style="display:flex; flex-direction:column; gap:0.4rem; align-items:flex-end;">
                 {% if not user.is_superuser %}
                   <span class="verified-badge">
                     ✓ Email Verified
@@ -80,6 +78,11 @@
                     Superuser
                   </span>
                 {% endif %}
+
+                <!-- New: moderator action to view this user's conversations -->
+                <a href="{% url 'admin_conversations' user.id %}" class="btn btn-secondary" style="font-size:0.78rem; padding:6px 10px;">
+                  View conversations
+                </a>
               </div>
             </li>
           {% endfor %}
