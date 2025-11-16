@@ -8,7 +8,7 @@ urlpatterns = [
     path("signup/", views.signup_view, name="signup"), 
     path("moderator/users/", views.admin_user_list, name="user_list"),
     path("moderator/dashboard/", views.admin_dashboard, name = "dashboard"),
-    path("moderator/conversations/", views.admin_conversations, name="admin_conversations"),
+    path("admin/users/<int:user_id>/conversations/", views.admin_conversations, name="admin_conversations"),
     path("moderator/reports/", views.admin_reports, name="admin_reports"),
 
 ]
