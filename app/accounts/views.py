@@ -65,33 +65,50 @@ def admin_conversations(request, user_id):
 
 @login_required
 def admin_reports(request):
-    if not _is_admin_user(request.user): # only admin users can access
-        raise PermissionDenied 
+    if not _is_admin_user(request.user):
+        raise PermissionDenied
+
+    reports = (
+        Report.objects
+        .select_related("post", "reported_by")
+        .order_by("-created_at")
+    )
 
     if request.method == "POST":
         report_id = request.POST.get("report_id")
         action = request.POST.get("action")
+
         report = get_object_or_404(Report, id=report_id)
 
         if action == "resolve":
             report.status = "resolved"
-            report.save()
-            messages.success(request, "Report marked as resolved.")
+            report.save(update_fields=["status"])
+
         elif action == "delist":
-            post = report.post
-            post.is_active = False   # or listing.status = "delisted"
-            post.save()
-            messages.success(request, "Listing has been delisted.")
+            # OPTION A (simplest): just delete the post.
+            # This will cascade-delete the report too (because of on_delete=models.CASCADE)
+            # so there is NO need to call report.save() afterward.
+            if report.post_id:
+                report.post.delete()
+            # Don't touch report.save() here.
+
         elif action == "ban_user":
-            owner = report.post.owner
-            owner.is_active = False
-            owner.save()
-            messages.success(request, "Listing owner has been banned.")
+            # You'll need a post.author if you want to ban the owner
+            if hasattr(report.post, "author") and report.post.author:
+                user = report.post.author
+                user.is_active = False
+                user.save()
+            # Optionally also mark resolved:
+            report.status = "resolved"
+            report.save(update_fields=["status"])
+
         return redirect("admin_reports")
 
-    reports = Report.objects.select_related("post", "reported_by").all()
-    return render(request, "admin/admin_reports.html", {"reports": reports})
-
+    return render(
+        request,
+        "admin/admin_reports.html",
+        {"reports": reports},
+    )
 
 @login_required
 def admin_dashboard(request):
