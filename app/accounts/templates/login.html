@@ -1,77 +1,72 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'login.css' %}">
-
-<html>
-
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Login</title>
+  <link rel="stylesheet" href="{% static 'login.css' %}">
 </head>
-
 <body>
-  <h2>Login</h2>
 
-  {% if form.errors %}
-  <p style="color:red;">Invalid username or password.</p>
-  {% endif %}
+  <div class="auth-card">
+    <h2>Login to Profile</h2>
+    <p id = "sub-text">Sign in to access your moderator profile or switch to the user dashboard.</p>
 
-  <!-- <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign in</button>
-  </form> -->
+    {% if form.errors %}
+      <p style="color:#fca5a5; margin-bottom: 12px;">
+        Invalid username or password. Please try again.
+      </p>
+    {% endif %}
 
-  <!-- <p>No account yet? <a href="{% url 'signup' %}">Create one</a></p> -->
+    <form method="post" action="">
+      {% csrf_token %}
+      {{ form.as_p }}
 
-  {% load socialaccount %}
-  <a href="{% provider_login_url 'google' %}">Sign in with Google</a>
+      <!-- This hidden field controls where the user is sent after login -->
+      <input type="hidden" name="next" id="next-field" value="/dashboard/">
 
-  <p><a id="toggle-link">Switch to Moderator</a></p>
+      <button type="submit">Sign in</button>
+    </form>
+
+    <p style="margin-top: 16px; color: var(--muted); font-size: 0.9rem;">
+      <a href="#" id="toggle-link">Switch to Moderator Dashboard</a>
+    </p>
+  </div>
 
   <script>
-
     document.addEventListener('DOMContentLoaded', function () {
-
       const link = document.getElementById('toggle-link');
-      const titleLine = document.querySelector('h2');
+      const titleLine = document.querySelector('.auth-card h2');
+      const nextField = document.getElementById('next-field');
+      const subText = document.getElementById("sub-text");
 
-      let isProfile = localStorage.getItem('dashboardMode') !== 'moderator'; // default true if not 'moderator'
+      // default is profile unless stored as 'moderator'
+      let isProfile = localStorage.getItem('dashboardMode') !== 'moderator';
 
-      function updateLink() {
+      function updateUI() {
         if (isProfile) {
-          link.textContent = 'Switch to Moderator';
-          titleLine.textContent = 'Login to Dashboard';
+          link.textContent = 'Switch to Moderator Dashboard';
+          titleLine.textContent = 'Login to Profile';
+          nextField.value = '/dashboard/';
+          subText.value = "Sign in to access your profile or switch to the moderator dashboard";
         } else {
-          link.textContent = 'Switch to Dashboard';
-          titleLine.textContent = 'Login to Moderator';
+          link.textContent = 'Switch to Profile';
+          titleLine.textContent = 'Login to Moderator Dashboard';
+          nextField.value = '/accounts/moderator/dashboard/';
+          subText.value = "Sign in to access your moderator profile or switch to the user dashboard";
         }
       }
 
-      updateLink();
-
-      if (!window.location.search) {
-        if (isProfile) {
-          window.location.search = '?next=/dashboard/';
-        } else {
-          window.location.search = '?next=/accounts/moderator/dashboard/';
-        }
-      }
+      updateUI();
 
       link.addEventListener('click', function (event) {
         event.preventDefault();
         isProfile = !isProfile;
         localStorage.setItem('dashboardMode', isProfile ? 'profile' : 'moderator');
-        if (isProfile) {
-          window.location.search = '?next=/dashboard/';
-        } else {
-          window.location.search = '?next=/accounts/moderator/dashboard/';
-        }
+        updateUI();
       });
-
     });
-
   </script>
 
 </body>
-
 </html>
