@@ -25,7 +25,6 @@ def signup_view(request):
         form = SignUpForm(initial=initial)
     return render(request, "signup.html", {"form": form})
 
-
 @login_required
 def admin_user_list(request):
     if not _is_admin_user(request.user): # only admin users can access
@@ -33,6 +32,43 @@ def admin_user_list(request):
 
     users = get_user_model().objects.all().order_by("username") # fetch all users
     return render(request, "admin/user_list.html", {"users": users}) # render template with users
+
+@login_required
+def admin_conversations(request):
+    if not _is_admin_user(request.user): # only admin users can access
+        raise PermissionDenied 
+
+    users = get_user_model().objects.all().order_by("username") # fetch all users
+    return render(request, "admin/admin_conversations.html", {"users": users}) # render template with users
+
+@login_required
+def admin_reports(request):
+    if not _is_admin_user(request.user): # only admin users can access
+        raise PermissionDenied 
+
+    if request.method == "POST":
+        report_id = request.POST.get("report_id")
+        action = request.POST.get("action")
+        report = get_object_or_404(Report, id=report_id)
+
+        if action == "resolve":
+            report.status = "resolved"
+            report.save()
+            messages.success(request, "Report marked as resolved.")
+        elif action == "delist":
+            listing = report.listing
+            listing.is_active = False   # or listing.status = "delisted"
+            listing.save()
+            messages.success(request, "Listing has been delisted.")
+        elif action == "ban_user":
+            owner = report.listing.owner
+            owner.is_active = False
+            owner.save()
+            messages.success(request, "Listing owner has been banned.")
+        return redirect("admin_reported_listings")
+
+    reports = Report.objects.select_related("listing", "reported_by", "listing__owner").all()
+    return render(request, "admin_reported_listings.html", {"reports": reports})
 
 @login_required
 def admin_dashboard(request):
