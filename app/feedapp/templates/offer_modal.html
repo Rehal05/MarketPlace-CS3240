@@ -1,0 +1,8 @@
+<form hx-post="{% url 'submit-offer' post.id %}" hx-target="#modal-body" hx-swap="outerHTML">
+  {{ form.non_field_errors }}
+  {{ form.amount.label_tag }} {{ form.amount }}
+  {{ form.amount.errors }}
+  {{ form.message.label_tag }} {{ form.message }}
+  {{ form.message.errors }}
+  <button type="submit">Send Offer</button>
+</form>

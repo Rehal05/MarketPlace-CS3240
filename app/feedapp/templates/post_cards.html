@@ -1,0 +1,13 @@
+{% for post in posts %}
+  <article class="feed-card">
+    <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
+    <h3>{{ post.title }}</h3>
+    <p>{{ post.description|truncatewords:20 }}</p>
+    <span class="price">{{ post.price_display }}</span>
+    {% if post.allow_offers %}
+      <button hx-get="{% url 'submit-offer' post.id %}" ...>Make Offer</button>
+    {% endif %}
+  </article>
+{% empty %}
+  <p>No posts match your filters.</p>
+{% endfor %}

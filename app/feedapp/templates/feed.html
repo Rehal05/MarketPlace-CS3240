@@ -181,7 +181,23 @@ p[style*="color:red"] {
   </style>
   <div class="wrapper">
     <h1>Feed</h1>
+    <form id="feed-filters" hx-get="{% url 'feed' %}" hx-target="#feed-results" hx-trigger="change delay:300ms, input delay:300ms">
+      <input type="text" name="q" placeholder="Search keywords or tags…">
+      <select name="category">
+        <option value="">All categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat.slug }}">{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+      <input type="number" name="min_price" min="0" step="0.01" placeholder="Min price">
+      <input type="number" name="max_price" min="0" step="0.01" placeholder="Max price">
+      <input type="text" name="tags" placeholder="camera, apple">
+      <input type="range" name="distance" min="1" max="100" value="25">
+    </form>
 
+    <div id="feed-results" hx-trigger="load" hx-get="{% url 'feed' %}" hx-include="#feed-filters">
+      {% include 'post_cards.html' with posts=page_obj %}
+    </div>
     <div class="grid">
       {% for post in page_obj %}
         <a href="{% url 'message:thread' post.author.id %}" class="card">
