@@ -4,14 +4,14 @@ from .models import Post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'image', 'description', 'price_min', 'price_max']
+        fields = ['title', 'image_url', 'description', 'price_min', 'price_max']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-input',
                 'placeholder': 'Enter post title',
                 'required': True
             }),
-            'image': forms.FileInput(attrs={
+            'image_url': forms.FileInput(attrs={
                 'class': 'form-input-file',
                 'accept': 'image/*'
             }),
@@ -35,7 +35,7 @@ class PostForm(forms.ModelForm):
         }
         labels = {
             'title': 'Title',
-            'image': 'Upload Image',
+            'image_url': 'Upload Image',
             'description': 'Description',
             'price_min': 'Minimum Price ($)',
             'price_max': 'Maximum Price ($)',

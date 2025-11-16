@@ -1,0 +1,79 @@
+{% load static tz %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Messages sent by {{ target_user.username }}</title>
+  <link rel="stylesheet" href="{% static 'login.css' %}">
+</head>
+<body class="page moderator-dashboard-page">
+
+  <main class="content">
+
+    <section class="card">
+      <header class="card-header">
+        <div>
+          <h2 class="card-title">Messages from {{ target_user.username }}</h2>
+          <p class="card-meta">
+            Viewing all messages this user has sent to others.
+          </p>
+        </div>
+        <div>
+          <a href="{% url 'user_list' %}" class="btn btn-secondary">
+            ← Back to user list
+          </a>
+        </div>
+      </header>
+
+      {% if messages %}
+        <ul class="tool-list">
+          {% for m in messages %}
+            <li class="tool-item message-item">
+              <div class="tool-main">
+                <div class="tool-title">
+                  To: {{ m.receiver.username }}
+                </div>
+
+                <div class="tool-description">
+                  <div>
+                    <strong>When:</strong>
+                    {{ m.timestamp|timezone:"US/Eastern"|date:"M d, Y H:i" }}
+                    (US/Eastern)
+                  </div>
+
+                  {% if m.content %}
+                    <div style="margin-top: 0.25rem;">
+                      <strong>Message:</strong>
+                      <span>{{ m.content }}</span>
+                    </div>
+                  {% endif %}
+
+                  {% if m.image_url %}
+                    <div style="margin-top: 0.25rem;">
+                      <strong>Image:</strong>
+                      <a href="{{ m.image_url }}" target="_blank">
+                        View image
+                      </a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="tool-actions">
+                <span class="verified-badge{% if not m.is_read %} verified-badge--ghost{% endif %}">
+                  {% if m.is_read %}Read{% else %}Unread{% endif %}
+                </span>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty-state">No messages from this user.</p>
+      {% endif %}
+    </section>
+
+  </main>
+
+</body>
+</html>
+

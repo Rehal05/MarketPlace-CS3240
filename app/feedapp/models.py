@@ -1,11 +1,44 @@
 from django.db import models
 from django.conf import settings
 
+class Report(models.Model):
+    post = models.ForeignKey(
+        "Post",
+        on_delete=models.CASCADE,
+        related_name="reports",
+    )
+
+    reported_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reports_filed",
+    )
+
+    reason = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    status = models.CharField(
+        max_length=20,
+        default="open",
+        choices=[
+            ("open", "Open"),
+            ("resolved", "Resolved"),
+        ],
+    )
+
+    def __str__(self):
+        who = self.reported_by or "Unknown"
+        return f"Report on {self.post} by {who}"
+
+
 class Post(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='posts'
+        related_name='posts',
+        null=True
     )
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='uploads/', blank=True, null=True)
