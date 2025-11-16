@@ -11,24 +11,53 @@
   <div class="wrapper">
     <h1>Feed</h1>
 
+    {# Optional: render Django messages #}
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <div class="grid">
       {% for post in page_obj %}
         <div class="card">
-          <!-- main clickable area: open message thread with the author -->
-          <a href="{% url 'message:thread' post.author.id %}" class="card-main">
-            {% if post.get_image_url %}
-              <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
-            {% else %}
-              <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
-            {% endif %}
-            <div class="card-content">
-              <div class="title">{{ post.title }}</div>
-              <div class="author">by {{ post.author.username }}</div>
-              <div class="desc">
-                {{ post.description|truncatechars:150 }}
+
+          {# Clickable link only if author exists #}
+          {% if post.author_id %}
+            <a href="{% url 'message:thread' post.author_id %}" class="card-main">
+          {% else %}
+            <div class="card-main">
+          {% endif %}
+
+              {% if post.image_url %}
+                <img src="{{ post.image_url }}" alt="{{ post.title }}">
+              {% else %}
+                <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
+              {% endif %}
+
+              <div class="card-content">
+                <div class="title">{{ post.title }}</div>
+
+                <div class="author">
+                  {% if post.author %}
+                    by {{ post.author.username }}
+                  {% else %}
+                    <span class="author-unknown">by Unknown</span>
+                  {% endif %}
+                </div>
+
+                <div class="desc">
+                  {{ post.description|truncatechars:150 }}
+                </div>
               </div>
+
+          {% if post.author_id %}
+            </a>
+          {% else %}
             </div>
-          </a>
+          {% endif %}
 
           <!-- footer with price + report button -->
           <div class="card-footer">
@@ -36,19 +65,35 @@
               {{ post.price_display }}
             </div>
 
+            <!-- REPORT FORM -->
             <form method="post" action="{% url 'report_post' post.id %}" class="report-form">
               {% csrf_token %}
-              <button type="submit" class="report-btn">
-                Report
-              </button>
+
+              <details class="report-details">
+                <summary class="report-summary">Report</summary>
+                <div class="report-body">
+                  <textarea
+                    name="reason"
+                    rows="2"
+                    class="report-textarea"
+                    placeholder="Optional: why are you reporting this?"
+                  ></textarea>
+
+                  <button type="submit" class="report-btn">
+                    Submit Report
+                  </button>
+                </div>
+              </details>
             </form>
           </div>
+
         </div>
       {% empty %}
         <p>No posts yet.</p>
       {% endfor %}
     </div>
 
+    {# Pagination #}
     {% if page_obj.paginator.num_pages > 1 %}
       <div class="pagination">
         {% if page_obj.has_previous %}
