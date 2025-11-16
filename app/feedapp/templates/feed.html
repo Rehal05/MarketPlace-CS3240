@@ -1,13 +1,11 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'feed.css' %}">
-
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Feed</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'feed.css' %}">
 </head>
 <body>
   <div class="wrapper">
@@ -15,23 +13,37 @@
 
     <div class="grid">
       {% for post in page_obj %}
-        <a href="{% url 'message:thread' post.author.id %}" class="card">
-          {% if post.get_image_url %}
-            <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
-          {% else %}
-            <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
-          {% endif %}
-          <div class="card-content">
-            <div class="title">{{ post.title }}</div>
-            <div class="author">by {{ post.author.username }}</div>
-            <div class="desc">
-              {{ post.description|truncatechars:150 }}
+        <div class="card">
+          <!-- main clickable area: open message thread with the author -->
+          <a href="{% url 'message:thread' post.author.id %}" class="card-main">
+            {% if post.get_image_url %}
+              <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
+            {% else %}
+              <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
+            {% endif %}
+            <div class="card-content">
+              <div class="title">{{ post.title }}</div>
+              <div class="author">by {{ post.author.username }}</div>
+              <div class="desc">
+                {{ post.description|truncatechars:150 }}
+              </div>
             </div>
+          </a>
+
+          <!-- footer with price + report button -->
+          <div class="card-footer">
             <div class="price">
               {{ post.price_display }}
             </div>
+
+            <form method="post" action="{% url 'report_post' post.id %}" class="report-form">
+              {% csrf_token %}
+              <button type="submit" class="report-btn">
+                Report
+              </button>
+            </form>
           </div>
-        </a>
+        </div>
       {% empty %}
         <p>No posts yet.</p>
       {% endfor %}
