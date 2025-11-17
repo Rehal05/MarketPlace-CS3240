@@ -10,16 +10,6 @@
 <body>
   <div class="wrapper">
     <h1>Feed</h1>
-
-    {# Optional: render Django messages #}
-    {% if messages %}
-      <div class="messages">
-        {% for message in messages %}
-          <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
     <div class="grid">
       {% for post in page_obj %}
         <div class="card">
