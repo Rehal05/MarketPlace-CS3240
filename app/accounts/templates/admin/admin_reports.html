@@ -126,6 +126,12 @@
                   {{ report.get_status_display }}
                 </div>
 
+                {% if report.post.status == 'delisted' %}
+                  <div style="margin-top:0.25rem;">
+                    <strong>Post:</strong> <span class="verified-badge">Delisted</span>
+                  </div>
+                {% endif %}
+
                 {% if report.reason %}
                   <div style="margin-top:0.25rem;">
                     <strong>Reason:</strong> {{ report.reason }}
@@ -154,6 +160,7 @@
                 </form>
               {% endif %}
 
+              {% if report.post.status != 'delisted' %}
               <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
                 {% csrf_token %}
                 <input type="hidden" name="report_id" value="{{ report.id }}">
@@ -162,6 +169,16 @@
                   Delist Listing
                 </button>
               </form>
+              {% else %}
+                <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="report_id" value="{{ report.id }}">
+                  <input type="hidden" name="action" value="resolve">
+                  <button type="submit" class="btn btn-secondary" style="font-size:0.78rem;">
+                    Mark Resolved
+                  </button>
+                </form>
+              {% endif %}
 
               <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
                 {% csrf_token %}

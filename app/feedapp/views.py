@@ -8,7 +8,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 
 def feed_view(request):
-    posts = Post.objects.all()
+    # only show active (not delisted) posts in the public feed
+    posts = Post.objects.filter(status="active")
     paginator = Paginator(posts, 9)  # 9 per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

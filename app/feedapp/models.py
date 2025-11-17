@@ -47,6 +47,12 @@ class Post(models.Model):
     price_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('active', 'Active'), ('delisted', 'Delisted')],
+        default='active',
+        help_text='Whether this post is visible in the feed or delisted by moderators.',
+    )
 
     class Meta:
         ordering = ['-created_at']  # newest first

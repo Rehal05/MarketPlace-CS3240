@@ -80,9 +80,11 @@ def admin_reports(request):
             report.save(update_fields=["status"])
 
         elif action == "delist":
-            # Delete the post; cascade will delete its reports too.
-            if report.post_id:
-                report.post.delete()
+            if report.post_id and report.post:
+                report.post.status = 'delisted'
+                report.post.save(update_fields=['status'])
+            report.status = 'resolved'
+            report.save(update_fields=['status'])
             # No report.save() here.
 
         elif action == "ban_user":
