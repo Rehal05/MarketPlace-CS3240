@@ -4,8 +4,8 @@
 <div class="chat">
   <div class="chat-header">
     <!-- <a class="back" href="{% url 'message:list' %}">← Messages</a> -->
-    <div class="avatar">{{ other.username|first|upper }}</div>
-    <div class="name">{{ other.username }}</div>
+    <div class="avatar">{{ other.nickname|default:other.username|first|upper }}</div>
+    <div class="name">{{ other.nickname|default:other.username }}</div>
   </div>
 
   <div class="chat-body">
@@ -14,7 +14,7 @@
       <div class="msg {% if m.sender_id == request.user.id %}me{% else %}other{% endif %}">
         {{ m.content }}
         <span class="meta">
-          {{ m.sender.username }} · {{ m.timestamp|date:"m-d H:i" }}
+          {{ m.sender.nickname|default:m.sender.username }} · {{ m.timestamp|date:"m-d H:i" }}
         </span>
       </div>
     {% empty %}

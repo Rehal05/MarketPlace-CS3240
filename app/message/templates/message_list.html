@@ -5,12 +5,12 @@
   <div class="sidebar-header">Messages</div>
   <div class="contact-list">
     {% for c in contacts %}
-      <div class="contact" onclick="document.getElementById('chat-iframe').src='{% url 'message:thread' c.id %}'">
-        <div class="avatar">{{ c.username|first|upper }}</div>
-        <div class="name">{{ c.username }}</div>
-      </div>
+    <div class="contact" onclick="document.getElementById('chat-iframe').src='{% url 'message:thread' c.id %}'">
+      <div class="avatar">{{ c.nickname|default:c.username|first|upper }}</div>
+      <div class="name">{{ c.nickname|default:c.username }}</div>
+    </div>
     {% empty %}
-      <p style="padding: 15px;">No contacts yet.</p>
+    <p style="padding: 15px;">No contacts yet.</p>
     {% endfor %}
   </div>
 </div>

@@ -43,7 +43,7 @@
     </div>
     <div class="profile-info">
       <div class="username-rating">
-        <h2>@{{ request.user.nickname|default:username }}</h2>
+        <h2>{{ request.user.nickname|default:username }}</h2>
         {% if avg_rating %}
         <span class="avg-rating">(⭐ {{ avg_rating }}/10)</span>
         {% else %}

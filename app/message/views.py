@@ -15,10 +15,10 @@ def message_list(request):
     contact_ids = set(list(sent_to_ids) + list(received_from_ids))
 
     if contact_ids:
-        contacts = User.objects.filter(id__in=contact_ids).exclude(id=user.id).order_by('username')
+        contacts = User.objects.filter(id__in=contact_ids).order_by('username')
     else:
         # no chats yet -> show everyone (except yourself)
-        contacts = User.objects.exclude(id=user.id).order_by('username')
+        contacts = [] #User.objects.exclude(id=user.id).order_by('username')
 
     return render(request, 'message_list.html', {'contacts': contacts})
 
