@@ -31,8 +31,14 @@
     <div class="topbar-content">
       <!-- Left: Profile Info -->
      
-  <a href="{% url 'edit_profile' %}" class="profile-section" style="text-decoration:none; color:inherit;">
-    <div class="avatar-container">
+  <div style="display:flex; align-items:center; gap:8px;">
+  <a href="#" class="notification-bell {% if has_unread_messages %}has-unread{% endif %}" onclick="changeIframe('{% url 'message:unread' %}'); return false;">🔔
+      {% if has_unread_messages and unread_count %}
+        <span class="notification-count">{{ unread_count }}</span>
+      {% endif %}
+    </a>
+    <a href="{% url 'edit_profile' %}" class="profile-section" style="text-decoration:none; color:inherit;">
+      <div class="avatar-container">
       {% if profile_image_url %}
         <img src="{{ profile_image_url }}" alt="Profile" class="avatar">
       {% else %}
@@ -52,7 +58,8 @@
       </div>
       <span class="verified-badge"> Email Verified</span>
     </div>
-  </a>
+    </a>
+  </div>
 
       <!-- payment button-->
       <!-- {% if request.user.venmo_url or request.user.paypal_url or request.user.other_payment_note %}

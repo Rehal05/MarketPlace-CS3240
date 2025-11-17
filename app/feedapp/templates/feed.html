@@ -16,7 +16,7 @@
 
           {# Clickable link only if author exists #}
           {% if post.author_id %}
-            <a href="{% url 'message:thread' post.author_id %}" class="card-main">
+            <a href="{% url 'message:thread_with_post' post.author_id post.id %}" class="card-main">
           {% else %}
             <div class="card-main">
           {% endif %}

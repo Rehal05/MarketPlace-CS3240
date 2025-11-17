@@ -6,13 +6,61 @@
     <!-- <a class="back" href="{% url 'message:list' %}">← Messages</a> -->
     <div class="avatar">{{ other.nickname|default:other.username|first|upper }}</div>
     <div class="name">{{ other.nickname|default:other.username }}</div>
+    {% if post %}
+      <div class="listing">for <span class="listing-title">{{ post.title }}</span></div>
+        <div class="post-meta">
+          {# Show seller actions or buyer status #}
+          {% if request.user.id == post.author_id %}
+            {% if post.sold_to %}
+              <div class="post-status">
+                <span class="status status-success">Sold to {{ post.sold_to.nickname|default:post.sold_to.username }}</span>
+              </div>
+            {% endif %}
+            {% if post.available and not post.sold_to %}
+              <form method="post" action="{% url 'message:post_status' other.id post.id %}" style="display:inline; margin-left:12px;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="mark_sold" />
+                <button class="post-action btn-sell" type="submit">Mark as sold to {{ other.nickname|default:other.username }}</button>
+              </form>
+            {% endif %}
+            {% if post.available %}
+              <form method="post" action="{% url 'message:post_status' other.id post.id %}" style="display:inline; margin-left:8px;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="mark_unavailable" />
+                <button class="post-action btn-unavailable" type="submit">Mark Unavailable</button>
+              </form>
+            {% endif %}
+          {% else %}
+            {# buyer sees status badge: available / unavailable / sold to you #}
+            <div class="post-status">
+              {% if post.sold_to and post.sold_to_id == request.user.id %}
+                <span class="status status-success">Sold to you</span>
+              {% elif post.available and not post.sold_to %}
+                <span class="status status-available">Available</span>
+              {% else %}
+                <span class="status status-unavailable">Unavailable</span>
+              {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    {% endif %}
   </div>
 
   <div class="chat-body">
 
     {% for m in messages %}
       <div class="msg {% if m.sender_id == request.user.id %}me{% else %}other{% endif %}">
-        {{ m.content }}
+        {% if m.get_image_url %}
+          <div class="msg-image">
+            <a href="{{ m.get_image_url }}" target="_blank" rel="noopener noreferrer">
+              <img src="{{ m.get_image_url }}" alt="image from {{ m.sender.username }}" />
+            </a>
+          </div>
+        {% endif %}
+
+        {% if m.content %}
+          <div class="msg-text">{{ m.content }}</div>
+        {% endif %}
         <span class="meta">
           {{ m.sender.nickname|default:m.sender.username }} · {{ m.timestamp|date:"m-d H:i" }}
         </span>
@@ -24,10 +72,77 @@
 
 
   <div class="chat-input">
-    <form method="post">
+  <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      <input type="text" name="content" placeholder="Type a message..." autocomplete="off" />
+  <label for="id_image" class="image-upload" title="Attach an image" aria-label="Attach an image">+</label>
+  <input id="id_image" type="file" name="image" accept="image/*" />
+  <input type="text" name="content" placeholder="Type a message..." autocomplete="off" />
       <button type="submit">Send</button>
     </form>
   </div>
 </div>
+
+  <script>
+    //this scrolling function was added with gpt 5 mini with the prompt "add a javascript function that keeps the chat scrolled to the bottom on load and when new messages arrive, unless the user has scrolled up"
+    (function(){
+      // Keep the chat scrolled to the bottom on open and when new nodes appear,
+      // but don't yank the scroll if the user has intentionally scrolled up.
+      const chatBody = document.querySelector('.chat-body');
+      if (!chatBody) return;
+
+      function scrollToBottom(behavior = 'auto') {
+        chatBody.scrollTo({ top: chatBody.scrollHeight, behavior });
+      }
+
+      function isNearBottom(threshold = 200) {
+        return chatBody.scrollHeight - chatBody.scrollTop - chatBody.clientHeight < threshold;
+      }
+
+      // initial load: wait for images to settle then jump to bottom
+      function initialScroll() {
+        // Small delay to let the browser lay out images and other media
+        setTimeout(() => scrollToBottom('auto'), 50);
+      }
+
+      if (document.readyState === 'complete') initialScroll();
+      else window.addEventListener('load', initialScroll);
+
+      // Auto-scroll when new messages are added, only when user is near bottom.
+      const observer = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          if (m.type !== 'childList') continue;
+          if (!m.addedNodes.length) continue;
+
+          // If the user is near the bottom, scroll; otherwise respect user position.
+          if (!isNearBottom()) return;
+
+          // If images exist in the new node, wait for them to load then scroll.
+          const lastAdded = m.addedNodes[m.addedNodes.length - 1];
+          const imgs = lastAdded.querySelectorAll ? lastAdded.querySelectorAll('img') : [];
+          if (imgs.length) {
+            let loaded = 0;
+            Array.from(imgs).forEach(img => {
+              if (img.complete) loaded++;
+              else {
+                img.addEventListener('load', () => { loaded++; if (loaded === imgs.length) scrollToBottom('smooth'); });
+                img.addEventListener('error', () => { loaded++; if (loaded === imgs.length) scrollToBottom('smooth'); });
+              }
+            });
+            if (loaded === imgs.length) scrollToBottom('smooth');
+          } else {
+            scrollToBottom('smooth');
+          }
+        }
+      });
+
+      observer.observe(chatBody, { childList: true, subtree: true });
+
+      // Ensure images that load later don't break scroll position; if user is near bottom, snap to bottom.
+      chatBody.querySelectorAll('img').forEach(img => {
+        if (!img.complete) img.addEventListener('load', () => { if (isNearBottom()) scrollToBottom('smooth'); });
+      });
+
+      // If navigation or cleanup, stop observing
+      window.addEventListener('beforeunload', () => observer.disconnect());
+    })();
+  </script>
