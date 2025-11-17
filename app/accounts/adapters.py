@@ -28,6 +28,12 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
             picture = sociallogin.account.extra_data.get('picture')
             if picture:
                 user.profile_pic = picture
+            # Populate nickname with Google full name when the nickname is empty.
+            if not user.nickname:
+                full_name = sociallogin.account.extra_data.get('name')
+
+                if full_name:
+                    user.nickname = full_name.strip()[:50]
         
         return user
     
