@@ -26,6 +26,11 @@
           <h2>@{{ username }}</h2>
           <span class="verified-badge">✓ Email Verified</span>
         </div>
+          {% if request.user.is_authenticated and is_admin %}
+            <div class="mod-actions">
+              <a href="/accounts/moderator/dashboard/" class="btn btn-moderation">🛠 Moderation Tools</a>
+            </div>
+          {% endif %}
       </div>
 
       <!-- Right: Action Buttons -->

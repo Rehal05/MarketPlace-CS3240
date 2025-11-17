@@ -21,8 +21,8 @@
             <div class="card-main">
           {% endif %}
 
-              {% if post.image_url %}
-                <img src="{{ post.image_url }}" alt="{{ post.title }}">
+              {% if post.get_image_url %}
+                <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
               {% else %}
                 <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
               {% endif %}
