@@ -12,3 +12,9 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2", "bio"]
+
+# edit profile
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["nickname","bio", "profile_pic","sustainability_interests","venmo_handle","paypal_handle","other_payment_note",]
