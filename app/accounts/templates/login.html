@@ -12,12 +12,6 @@
   <h2>Login</h2>
   <p id="sub-text">Sign in to access the app.</p>
 
-    {% if form.errors %}
-      <p style="color:#fca5a5; margin-bottom: 12px;">
-        Invalid username or password. Please try again.
-      </p>
-    {% endif %}
-
     {% load socialaccount %}
 
     <a id="google-login" class="btn btn-primary" data-base="{% provider_login_url 'google' %}" href="{% provider_login_url 'google' %}?next=/dashboard/">Sign in with Google</a>

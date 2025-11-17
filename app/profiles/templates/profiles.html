@@ -8,6 +8,24 @@
   <link rel="stylesheet" href="{% static 'profiles.css' %}">
 </head>
 <body>
+  <style>
+    /* Dashboard Banner Styling (username, rating) */
+    .profile-info {
+      display: flex;
+      flex-direction: column; /* stack username-rating and verified badge */
+    }
+
+    .username-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;   /* spacing between username and rating */
+    }
+
+    .avg-rating {
+      font-weight: 500;
+      color: #f5a623;
+    }
+  </style>
   <!-- Top Navigation Bar -->
   <nav class="topbar">
     <div class="topbar-content">
@@ -24,7 +42,14 @@
       {% endif %}
     </div>
     <div class="profile-info">
-      <h2>@{{ request.user.nickname|default:username }}</h2>
+      <div class="username-rating">
+        <h2>@{{ request.user.nickname|default:username }}</h2>
+        {% if avg_rating %}
+        <span class="avg-rating">(⭐ {{ avg_rating }}/10)</span>
+        {% else %}
+        <span class="avg-rating">(⭐ No ratings yet)</span>
+        {% endif %}
+      </div>
       <span class="verified-badge"> Email Verified</span>
     </div>
   </a>
@@ -97,6 +122,7 @@
           </a>
           <a href="#" class="btn btn-messages" onclick="changeIframe('{% url 'feed' %}')">📄 Feed</a>
           <a href="#" class="btn btn-messages" onclick="changeIframe('{% url 'message:list' %}')">💬 Messages</a>
+          <a href="#" class="btn btn-messages" onclick="changeIframe('{% url 'my_listings' %}')">📦 My Listings</a>
         {% endif %}
         <form method="post" action="{% url 'logout' %}" class="logout-form">
           {% csrf_token %}
