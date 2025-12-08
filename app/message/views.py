@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Message
 from feedapp.models import Post
 from django.contrib import messages as django_messages
+from django.http import JsonResponse
 
 @login_required
 def message_list(request):
@@ -116,3 +117,12 @@ def unread_messages(request):
     msgs = Message.objects.filter(receiver=user, is_read=False).select_related('sender', 'post').order_by('-timestamp')
 
     return render(request, 'message_unread_list.html', {'messages': msgs})
+
+# Return JSON with unread message count for current user
+@login_required
+def unread_count_api(request):
+    count = Message.objects.filter(
+        receiver=request.user,
+        is_read=False
+    ).count()
+    return JsonResponse({"unread_count": count})

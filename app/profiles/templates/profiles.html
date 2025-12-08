@@ -33,9 +33,14 @@
      
   <div style="display:flex; align-items:center; gap:8px;">
   <a href="#" class="notification-bell {% if has_unread_messages %}has-unread{% endif %}" onclick="changeIframe('{% url 'message:unread' %}'); return false;">🔔
+    <!-- Fix Bug: Update new message notification-->
+      <span id="bell-count" class="notification-count">
       {% if has_unread_messages and unread_count %}
-        <span class="notification-count">{{ unread_count }}</span>
+          {{ unread_count }}
+      {% else %}
+          0
       {% endif %}
+      </span>
     </a>
     <a href="{% url 'edit_profile' %}" class="profile-section" style="text-decoration:none; color:inherit;">
       <div class="avatar-container">
@@ -148,6 +153,41 @@
     function changeIframe(url) {
       document.querySelector('.feed-iframe').src = url;
     }
+    // Fix Bug: Auto-refresh unread message count every few seconds
+    document.addEventListener('DOMContentLoaded', function () {
+      const bellCountSpan = document.getElementById('bell-count');
+      const bellIcon = document.querySelector('.notification-bell');
+      if (!bellCountSpan || !bellIcon) return;
+
+      async function refreshBellCount() {
+        try {
+          const response = await fetch("{% url 'message:unread_count_api' %}", {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+          });
+
+          if (!response.ok) return;
+          const data = await response.json();
+          const count = data.unread_count ?? 0;
+
+          if (count > 0) {
+            bellCountSpan.textContent = count;
+            bellCountSpan.style.display = 'inline-block';
+            bellIcon.classList.add('has-unread');
+          } else {
+            bellCountSpan.textContent = '';
+            bellCountSpan.style.display = 'none';
+            bellIcon.classList.remove('has-unread');
+          }
+        } catch (err) {
+          console.error("Failed to refresh bell count:", err);
+        }
+      }
+
+      // Initial fetch + polling every 5 seconds
+      refreshBellCount();
+      setInterval(refreshBellCount, 5000);
+    });
+
   </script>
 </body>
 </html>

@@ -10,5 +10,6 @@ urlpatterns = [
     path('<int:user_id>/', views.message_thread, name='thread'),
     path('<int:user_id>/<int:post_id>/', views.message_thread, name='thread_with_post'),
     # actions for posts from the thread view
-    path('<int:user_id>/<int:post_id>/status/', views.post_status, name='post_status')
+    path('<int:user_id>/<int:post_id>/status/', views.post_status, name='post_status'),
+    path('api/unread-count/', views.unread_count_api, name='unread_count_api'),
 ]
