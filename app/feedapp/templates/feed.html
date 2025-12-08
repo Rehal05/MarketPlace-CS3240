@@ -52,7 +52,15 @@
           <!-- footer with price + report button -->
           <div class="card-footer">
             <div class="price">
-              {{ post.price_display }}
+              {# Add feature: Only Author could change price here#}
+              {% if request.user.is_authenticated and post.author_id == request.user.id %}
+                <a href="{% url 'edit_post' post_id=post.id %}" class="price-edit-link">
+                  {{ post.price_display }}
+                  <span class="edit-hint">✏️</span>
+                </a>
+              {% else %}
+                {{ post.price_display }}
+              {% endif %}
             </div>
 
             <!-- REPORT FORM -->

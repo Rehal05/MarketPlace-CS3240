@@ -2,6 +2,17 @@ from django import forms
 from .models import Post
 
 class PostForm(forms.ModelForm):
+    
+    # Allow optional max price, and keep same style as min price
+    price_max = forms.DecimalField(
+        required=False,
+        widget=forms.NumberInput(attrs={  # use NumberInput widget
+            'class': 'form-input', # same as price_min
+            'placeholder': 'Maximum price (optional)',
+            'step': '0.01',
+            'min': '0',
+        })
+    )
     class Meta:
         model = Post
         fields = ['title', 'image', 'description', 'price_min', 'price_max']
@@ -38,7 +49,7 @@ class PostForm(forms.ModelForm):
             'image': 'Upload Image',
             'description': 'Description',
             'price_min': 'Minimum Price ($)',
-            'price_max': 'Maximum Price ($)',
+            'price_max': 'Maximum Price ($)(Optional)',
         }
 
     def clean(self):
