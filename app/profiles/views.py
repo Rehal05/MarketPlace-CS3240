@@ -1,14 +1,22 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
 from accounts.forms import ProfileEditForm 
+from accounts.views import _is_admin_user
+from feedapp.models import Rating
+from message.models import Message
 
 @login_required
 def dashboard(request):
     user = request.user
+    avg_rating = Rating.get_user_average(user)
     context = {
         "username": user.username,
         "signup_date": user.date_joined,
         "profile_image_url": user.profile_pic,
+        "avg_rating": avg_rating,
+        "is_admin": _is_admin_user(user),
+        "has_unread_messages": Message.objects.filter(receiver=user, is_read=False).exists(),
+        "unread_count": Message.objects.filter(receiver=user, is_read=False).count(),
     }
     return render(request, "profiles.html", context)
 

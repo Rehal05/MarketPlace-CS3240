@@ -80,10 +80,13 @@ h1 {
 /* ─────────────── Card content ─────────────── */
 .card-content {
   padding: 1rem 1.25rem 1.25rem;
-  flex: 1;
+  /* don't expand the inner content to fill the card; instead push it
+     to the bottom of .card-main when cards are taller than their content */
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  margin-top: auto;
 }
 
 .title {
@@ -162,7 +165,11 @@ p[style*="color:red"] {
 }
 
 .card-main {
-  display: block;
+  /* make the main clickable area a flex column so its content can be
+     positioned at the bottom when cards in a row have different heights */
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   text-decoration: none;
   color: inherit;
 }
