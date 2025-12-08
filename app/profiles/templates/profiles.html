@@ -8,13 +8,37 @@
   <link rel="stylesheet" href="{% static 'profiles.css' %}">
 </head>
 <body>
+  <style>
+    /* Dashboard Banner Styling (username, rating) */
+    .profile-info {
+      display: flex;
+      flex-direction: column; /* stack username-rating and verified badge */
+    }
+
+    .username-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;   /* spacing between username and rating */
+    }
+
+    .avg-rating {
+      font-weight: 500;
+      color: #f5a623;
+    }
+  </style>
   <!-- Top Navigation Bar -->
   <nav class="topbar">
     <div class="topbar-content">
       <!-- Left: Profile Info -->
      
-  <a href="{% url 'edit_profile' %}" class="profile-section" style="text-decoration:none; color:inherit;">
-    <div class="avatar-container">
+  <div style="display:flex; align-items:center; gap:8px;">
+  <a href="#" class="notification-bell {% if has_unread_messages %}has-unread{% endif %}" onclick="changeIframe('{% url 'message:unread' %}'); return false;">🔔
+      {% if has_unread_messages and unread_count %}
+        <span class="notification-count">{{ unread_count }}</span>
+      {% endif %}
+    </a>
+    <a href="{% url 'edit_profile' %}" class="profile-section" style="text-decoration:none; color:inherit;">
+      <div class="avatar-container">
       {% if profile_image_url %}
         <img src="{{ profile_image_url }}" alt="Profile" class="avatar">
       {% else %}
@@ -24,13 +48,21 @@
       {% endif %}
     </div>
     <div class="profile-info">
-      <h2>@{{ request.user.nickname|default:username }}</h2>
+      <div class="username-rating">
+        <h2>{{ request.user.nickname|default:username }}</h2>
+        {% if avg_rating %}
+        <span class="avg-rating">(⭐ {{ avg_rating }}/10)</span>
+        {% else %}
+        <span class="avg-rating">(⭐ No ratings yet)</span>
+        {% endif %}
+      </div>
       <span class="verified-badge"> Email Verified</span>
     </div>
-  </a>
+    </a>
+  </div>
 
       <!-- payment button-->
-      {% if request.user.venmo_url or request.user.paypal_url or request.user.other_payment_note %}
+      <!-- {% if request.user.venmo_url or request.user.paypal_url or request.user.other_payment_note %}
     <div class="payment-links" style="margin-top:16px;">
         <h3 class="section-title" style="font-size:14px; color:var(--muted); margin-bottom:8px;">
             Payment / Support
@@ -80,9 +112,14 @@
             {% endif %}
 
         </div>
-    </div>
-    {% endif %}
-
+      </div>
+      {% endif %} -->
+      
+      {% if request.user.is_authenticated and is_admin %}
+      <div class="mod-actions">
+        <a href="/accounts/moderator/dashboard/" class="btn btn-moderation">🛠 Moderation Tools</a>
+      </div>
+      {% endif %}
 
       <!-- Right: Action Buttons -->
       <div class="actions-section">
@@ -92,6 +129,7 @@
           </a>
           <a href="#" class="btn btn-messages" onclick="changeIframe('{% url 'feed' %}')">📄 Feed</a>
           <a href="#" class="btn btn-messages" onclick="changeIframe('{% url 'message:list' %}')">💬 Messages</a>
+          <a href="#" class="btn btn-messages" onclick="changeIframe('{% url 'my_listings' %}')">📦 My Listings</a>
         {% endif %}
         <form method="post" action="{% url 'logout' %}" class="logout-form">
           {% csrf_token %}

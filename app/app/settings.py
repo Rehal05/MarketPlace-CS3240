@@ -311,3 +311,5 @@ if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
 else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media/uploads/'
+
+DEBUG=True

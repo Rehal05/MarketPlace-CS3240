@@ -8,63 +8,27 @@
 </head>
 <body>
 
-  <div class="auth-card">
-    <h2>Login to Profile</h2>
-    <p id = "sub-text">Sign in to access your moderator profile or switch to the user dashboard.</p>
+  <div class="auth-card" style="padding: 96px 28px;">
+  <h2>Login</h2>
+  <p id="sub-text">Sign in to access the app.</p>
 
-    {% if form.errors %}
-      <p style="color:#fca5a5; margin-bottom: 12px;">
-        Invalid username or password. Please try again.
-      </p>
-    {% endif %}
+    {% load socialaccount %}
 
-    <form method="post" action="">
-      {% csrf_token %}
-      {{ form.as_p }}
+    <a id="google-login" class="btn btn-primary" data-base="{% provider_login_url 'google' %}" href="{% provider_login_url 'google' %}?next=/dashboard/">Sign in with Google</a>
 
-      <!-- This hidden field controls where the user is sent after login -->
-      <input type="hidden" name="next" id="next-field" value="/dashboard/">
-
-      <button type="submit">Sign in</button>
-    </form>
-
-    <p style="margin-top: 16px; color: var(--muted); font-size: 0.9rem;">
-      <a href="#" id="toggle-link">Switch to Moderator Dashboard</a>
-    </p>
+    <input type="hidden" name="next" id="next-field" value="/dashboard/">
   </div>
 
   <script>
+    // Set the Google login URL with the `next` parameter on load.
     document.addEventListener('DOMContentLoaded', function () {
-      const link = document.getElementById('toggle-link');
-      const titleLine = document.querySelector('.auth-card h2');
       const nextField = document.getElementById('next-field');
-      const subText = document.getElementById("sub-text");
-
-      // default is profile unless stored as 'moderator'
-      let isProfile = localStorage.getItem('dashboardMode') !== 'moderator';
-
-      function updateUI() {
-        if (isProfile) {
-          link.textContent = 'Switch to Moderator Dashboard';
-          titleLine.textContent = 'Login to Profile';
-          nextField.value = '/dashboard/';
-          subText.value = "Sign in to access your profile or switch to the moderator dashboard";
-        } else {
-          link.textContent = 'Switch to Profile';
-          titleLine.textContent = 'Login to Moderator Dashboard';
-          nextField.value = '/accounts/moderator/dashboard/';
-          subText.value = "Sign in to access your moderator profile or switch to the user dashboard";
-        }
+      const googleLink = document.getElementById('google-login');
+      if (googleLink) {
+        const base = googleLink.dataset.base || googleLink.getAttribute('href') || '';
+        const sep = base.includes('?') ? '&' : '?';
+        googleLink.href = base + sep + 'next=' + encodeURIComponent(nextField.value);
       }
-
-      updateUI();
-
-      link.addEventListener('click', function (event) {
-        event.preventDefault();
-        isProfile = !isProfile;
-        localStorage.setItem('dashboardMode', isProfile ? 'profile' : 'moderator');
-        updateUI();
-      });
     });
   </script>
 

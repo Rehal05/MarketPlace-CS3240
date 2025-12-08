@@ -1,0 +1,69 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'chat_list.css' %}">
+
+<div class="sidebar">
+  <div class="sidebar-header">Unread Messages</div>
+  <div class="contact-list unread-list">
+    {% if messages %}
+    {% for m in messages %}
+  <div class="message-item" 
+     data-sender-id="{{ m.sender.id }}" 
+     data-post-id="{% if m.post %}{{ m.post.id }}{% else %}none{% endif %}"
+     data-url="{% if m.post %}{% url 'message:thread_with_post' m.sender.id m.post.id %}{% else %}{% url 'message:thread' m.sender.id %}{% endif %}">
+        <div class="avatar">{{ m.sender.nickname|default:m.sender.username|first|upper }}</div>
+        <div class="contact-info">
+          <div class="name">{{ m.sender.nickname|default:m.sender.username }}</div>
+          {% if m.post %}
+            <div class="sub">about {{ m.post.title }}</div>
+          {% endif %}
+          <div class="sub">{{ m.content|default:""|truncatechars:80 }} {% if m.get_image_url %} <span title="Sent an image">🖼️</span>{% endif %}</div>
+        </div>
+      </div>
+      {% endfor %}
+
+  <script>
+    // and remove other unread messages from the same conversation.
+    (function(){
+      function openThread(url){
+        try {
+          // prefer the chat pane embedded in this page if present
+          var chatIframe = document.getElementById('chat-iframe');
+          if(chatIframe){
+            chatIframe.src = url;
+            return;
+          }
+
+          // fallback - if no chat iframe, navigate the top-level window
+          window.location.href = url;
+        } catch(e){
+          // fail quietly if cross-origin or missing parent
+          console.warn('Could not open conversation in parent iframe', e);
+        }
+      }
+
+      document.querySelectorAll('.message-item').forEach(function(el){
+        el.addEventListener('click', function(evt){
+          var url = el.getAttribute('data-url');
+          var senderId = el.getAttribute('data-sender-id');
+          var postId = el.getAttribute('data-post-id');
+          if(url){
+            openThread(url);
+          }
+
+          // remove other unread messages for this convo in the list
+          document.querySelectorAll('.message-item[data-sender-id="'+senderId+'"][data-post-id="'+postId+'"]').forEach(function(dup){
+            if(dup !== el){
+              dup.parentNode && dup.parentNode.removeChild(dup);
+            }
+          });
+        });
+      });
+    })();
+  </script>
+    {% else %}
+      <p style="padding: 15px;">No unread messages.</p>
+    {% endif %}
+  </div>
+</div>
+
+<iframe id="chat-iframe" src="{% url 'message:preview' %}" style="flex: 1; border: none;"></iframe>

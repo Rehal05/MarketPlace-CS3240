@@ -10,29 +10,19 @@
 <body>
   <div class="wrapper">
     <h1>Feed</h1>
-
-    {# Optional: render Django messages #}
-    {% if messages %}
-      <div class="messages">
-        {% for message in messages %}
-          <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
     <div class="grid">
       {% for post in page_obj %}
         <div class="card">
 
           {# Clickable link only if author exists #}
           {% if post.author_id %}
-            <a href="{% url 'message:thread' post.author_id %}" class="card-main">
+            <a href="{% url 'message:thread_with_post' post.author_id post.id %}" class="card-main">
           {% else %}
             <div class="card-main">
           {% endif %}
 
-              {% if post.image_url %}
-                <img src="{{ post.image_url }}" alt="{{ post.title }}">
+              {% if post.get_image_url %}
+                <img src="{{ post.get_image_url }}" alt="{{ post.title }}">
               {% else %}
                 <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
               {% endif %}
@@ -42,7 +32,7 @@
 
                 <div class="author">
                   {% if post.author %}
-                    by {{ post.author.username }}
+                    by {{ post.author.nickname }}
                   {% else %}
                     <span class="author-unknown">by Unknown</span>
                   {% endif %}
