@@ -60,8 +60,9 @@
             <form method="post">
                 {% csrf_token %}
 
+                {# Nickname / handle #}
                 <div class="form-group">
-                    <label for="{{ form.nickname.id_for_label }}">Display Name / Nickname</label>
+                    <label for="{{ form.nickname.id_for_label }}">Nickname / Handle</label>
                     {{ form.nickname }}
                     {% if form.nickname.errors %}
                         <div class="error-list">{{ form.nickname.errors }}</div>
