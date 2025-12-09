@@ -183,7 +183,7 @@ p[style*="color:red"] {
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px 10px;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .report-form {
