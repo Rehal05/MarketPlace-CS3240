@@ -11,9 +11,11 @@
         <div class="post-meta">
           {# Show seller actions or buyer status #}
           {% if request.user.id == post.author_id %}
-            {% if post.sold_to %}
+            {% if post.sold_to and not post.pending_sale %}
               <div class="post-status">
-                <span class="status status-success">Sold to {{ post.sold_to.nickname|default:post.sold_to.username }}</span>
+                <span class="status status-success">
+                  Sold to {{ post.sold_to.nickname|default:post.sold_to.username }}
+                </span>
               </div>
             {% endif %}
             {% if post.pending_sale %}
@@ -23,7 +25,7 @@
                 </span>
               </div>
 
-              <form method="post" action="{% url 'undo_sale' post.id %}" style="display:inline; margin-left:12px;">
+              <form method="post" action="{% url 'message:undo_sale' post.id %}" style="display:inline; margin-left:12px;">
                 {% csrf_token %}
                 <button class="post-action btn-warning" type="submit">
                   Undo Sale
