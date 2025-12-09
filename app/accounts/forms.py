@@ -25,3 +25,12 @@ class ProfileEditForm(forms.ModelForm):
             "paypal_handle",
             "other_payment_note",
         ]
+
+        widgets = {
+            "nickname": forms.TextInput(attrs={"maxlength": 50}),
+            "bio": forms.Textarea(attrs={"maxlength": 500}),
+            "sustainability_interests": forms.Textarea(attrs={"maxlength": 200}),
+            "venmo_handle": forms.TextInput(attrs={"maxlength": 50}),
+            "paypal_handle": forms.TextInput(attrs={"maxlength": 50}),
+            "other_payment_note": forms.Textarea(attrs={"maxlength": 200}),
+        }

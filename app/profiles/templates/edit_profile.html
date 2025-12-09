@@ -73,6 +73,9 @@
                 <div class="form-group">
                     <label for="{{ form.sustainability_interests.id_for_label }}">Sustainability interests</label>
                     {{ form.sustainability_interests }}
+                    <small style="font-size:11px;color:var(--muted);">
+                        Max 200 characters
+                    </small>
                     {% if form.sustainability_interests.errors %}
                         <div class="error-list">{{ form.sustainability_interests.errors }}</div>
                     {% endif %}
@@ -82,6 +85,9 @@
                 <div class="form-group">
                     <label for="{{ form.bio.id_for_label }}">Bio</label>
                     {{ form.bio }}
+                    <small style="font-size:11px;color:var(--muted);">
+                        Max 500 characters
+                    </small>
                     {% if form.bio.errors %}
                         <div class="error-list">{{ form.bio.errors }}</div>
                     {% endif %}
@@ -111,7 +117,7 @@
                     <label for="{{ form.venmo_handle.id_for_label }}">Venmo username</label>
                     {{ form.venmo_handle }}
                     <small style="font-size:11px;color:var(--muted);">
-                        Only your Venmo handle, e.g. <code>bill123</code>.
+                        Only your Venmo handle, e.g. <code>bill123</code>. Max 50 characters.
                     </small>
                     {% if form.venmo_handle.errors %}
                         <div class="error-list">{{ form.venmo_handle.errors }}</div>
@@ -122,6 +128,9 @@
                 <div class="form-group">
                     <label for="{{ form.paypal_handle.id_for_label }}">PayPal username or email</label>
                     {{ form.paypal_handle }}
+                    <small style="font-size:11px;color:var(--muted);">
+                        Max 50 characters
+                    </small>
                     {% if form.paypal_handle.errors %}
                         <div class="error-list">{{ form.paypal_handle.errors }}</div>
                     {% endif %}
@@ -133,6 +142,9 @@
                     {{ form.other_payment_note }}
                     <small style="font-size:11px;color:var(--muted);">
                         e.g. Other payment methods you want to share.
+                    </small>
+                    <small style="font-size:11px;color:var(--muted);">
+                        Max 200 characters
                     </small>
                     {% if form.other_payment_note.errors %}
                         <div class="error-list">{{ form.other_payment_note.errors }}</div>
