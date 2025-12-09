@@ -92,6 +92,18 @@ def edit_post_view(request, post_id):
     
     return render(request, 'edit_post.html', {'form': form, 'post': post})
 
+@login_required
+def undo_sale_view(request, post_id):
+    post = get_object_or_404(Post, id=post_id, author=request.user)
+
+    if not post.pending_sale:
+        messages.error(request, "This sale can no longer be undone.")
+        return redirect('my_listings')
+    
+    post.undo_sale()
+    messages.success(request, "Sale undone. Listing is available again.")
+    return redirect('my_listings')
+
 
 #Rating Functionality
 class RatingForm(forms.ModelForm):
