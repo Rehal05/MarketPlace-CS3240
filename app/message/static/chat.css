@@ -63,6 +63,35 @@ html, body {
   font-weight: bold;
 }
 
+.post-meta {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.post-status .status {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.status-available { background: #10b981; color: white; }
+.status-unavailable { background: #ef4444; color: white; }
+.status-success { background: #16a34a; color: white; }
+
+.post-action {
+  padding: 6px 10px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-sell { background: #16a34a; color: #fff; }
+.btn-unavailable { background: #ef4444; color: #fff; }
+
 .chat-body {
   flex: 1;
   overflow-y: auto;
@@ -79,6 +108,19 @@ html, body {
   margin: 6px 0;
   word-wrap: break-word;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* image message styles */
+.msg-image img {
+  display: block;
+  max-width: 50vw; /* at most half the page width */
+  max-height: 80vh; /* 80% of viewport height */
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+.msg-image {
+  margin-bottom: 8px;
 }
 
 .msg.other {
@@ -109,6 +151,32 @@ html, body {
 .chat-input form {
   display: flex;
   gap: 8px;
+  align-items: center;
+}
+
+/* custom image upload button - a plus icon in a circle */
+.image-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: bold;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.image-upload:hover {
+  color: var(--text);
+  border-color: #3b82f6;
+}
+
+/* hide default file input and allow label as trigger */
+.chat-input input[type="file"] {
+  display: none;
 }
 
 .chat-input input[type="text"] {

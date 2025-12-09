@@ -2,10 +2,13 @@ from django.urls import path
 from .views import feed_view, new_post_view, my_listings_view, toggle_availability_view, mark_sold_review, rate_user_view, edit_post_view
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
 
 urlpatterns = [
     path('', feed_view, name='feed'),
     path('newpost/', new_post_view, name='newpost'),
+    path("post/<int:post_id>/report/", views.report_post, name="report_post"),
+
 
     #My Listings 
     path('my-listings/', my_listings_view, name='my_listings'),

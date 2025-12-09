@@ -1,79 +1,36 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'login.css' %}">
-
-<html>
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Login</title>
+  <link rel="stylesheet" href="{% static 'login.css' %}">
 </head>
-
 <body>
+
+  <div class="auth-card" style="padding: 96px 28px;">
   <h2>Login</h2>
+  <p id="sub-text">Sign in to access the app.</p>
 
-  {% if form.errors %}
-    <p style="color:red;">Invalid username or password.</p>
-  {% endif %}
+    {% load socialaccount %}
 
-  <!-- ============================================= -->
-  <!-- ENABLE THIS FORM FOR LOCAL SUPERUSER LOGIN -->
-  <!-- ============================================= -->
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign in</button>
-  </form>
-  <!-- ============================================= -->
+    <a id="google-login" class="btn btn-primary" data-base="{% provider_login_url 'google' %}" href="{% provider_login_url 'google' %}?next=/dashboard/">Sign in with Google</a>
 
-  <!-- ============================================= -->
-  <!-- OPTIONAL: Signup link -->
-  <p>No account yet? <a href="{% url 'signup' %}">Create one</a></p>
-  <!-- ============================================= -->
-
-  <!-- ============================================= -->
-  <!-- COMMENT OUT SOCIAL LOGIN TO AVOID CRASH 
-  {# {% load socialaccount %} #}
-  {# <a href="{% provider_login_url 'google' %}">Sign in with Google</a> #} -->
-  <!-- ============================================= -->
-
-  <p><a id="toggle-link">Switch to Moderator</a></p>
+    <input type="hidden" name="next" id="next-field" value="/dashboard/">
+  </div>
 
   <script>
+    // Set the Google login URL with the `next` parameter on load.
     document.addEventListener('DOMContentLoaded', function () {
-      const link = document.getElementById('toggle-link');
-      const titleLine = document.querySelector('h2');
-      let isProfile = localStorage.getItem('dashboardMode') !== 'moderator';
-
-      function updateLink() {
-        if (isProfile) {
-          link.textContent = 'Switch to Moderator';
-          titleLine.textContent = 'Login to Dashboard';
-        } else {
-          link.textContent = 'Switch to Dashboard';
-          titleLine.textContent = 'Login to Moderator';
-        }
+      const nextField = document.getElementById('next-field');
+      const googleLink = document.getElementById('google-login');
+      if (googleLink) {
+        const base = googleLink.dataset.base || googleLink.getAttribute('href') || '';
+        const sep = base.includes('?') ? '&' : '?';
+        googleLink.href = base + sep + 'next=' + encodeURIComponent(nextField.value);
       }
-
-      updateLink();
-
-      if (!window.location.search) {
-        if (isProfile) {
-          window.location.search = '?next=/dashboard/';
-        } else {
-          window.location.search = '?next=/accounts/moderator/dashboard/';
-        }
-      }
-
-      link.addEventListener('click', function (event) {
-        event.preventDefault();
-        isProfile = !isProfile;
-        localStorage.setItem('dashboardMode', isProfile ? 'profile' : 'moderator');
-        if (isProfile) {
-          window.location.search = '?next=/dashboard/';
-        } else {
-          window.location.search = '?next=/accounts/moderator/dashboard/';
-        }
-      });
     });
   </script>
+
 </body>
 </html>

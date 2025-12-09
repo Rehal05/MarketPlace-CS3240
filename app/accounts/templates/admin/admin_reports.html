@@ -1,0 +1,204 @@
+{% load static tz %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Reported Listings</title>
+  <link rel="stylesheet" href="{% static 'login.css' %}">
+</head>
+<body class="page moderator-dashboard-page">
+
+<main class="content">
+
+  <!-- Header -->
+  <header class="top-nav-bar">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <span class="nav-title">Reported Listings</span>
+        <span class="nav-sub">Review and act on listings that users have reported.</span>
+      </div>
+
+      <nav class="nav-links">
+        <a href="/accounts/moderator/dashboard/" class="btn btn-secondary">← Back to Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <!-- FILTER BAR -->
+  <section class="card" style="margin-bottom:1rem;">
+    <header class="card-header">
+      <h2 class="card-title">Filter Reports</h2>
+    </header>
+
+    <div class="filter-bar" style="display:flex; gap:1rem; padding:1rem;">
+      <a href="?status=open"
+         class="btn {% if active_filter == 'open' %}btn-primary{% else %}btn-secondary{% endif %}">
+        Open
+      </a>
+
+      <a href="?status=resolved"
+         class="btn {% if active_filter == 'resolved' %}btn-primary{% else %}btn-secondary{% endif %}">
+        Resolved
+      </a>
+
+      <a href="?status=all"
+         class="btn {% if active_filter == 'all' %}btn-primary{% else %}btn-secondary{% endif %}">
+        All
+      </a>
+    </div>
+  </section>
+
+
+  <!-- REPORT LIST -->
+  <section class="card">
+    <header class="card-header">
+      <h2 class="card-title">
+        {% if active_filter == 'open' %}Open Reports
+        {% elif active_filter == 'resolved' %}Resolved Reports
+        {% else %}All Reports{% endif %}
+      </h2>
+
+      <p class="card-meta">
+        {% if active_filter == 'open' %}
+          Only unresolved reports are shown.
+        {% elif active_filter == 'resolved' %}
+          Only completed/closed reports are shown.
+        {% else %}
+          Showing all reports.
+        {% endif %}
+      </p>
+    </header>
+
+
+    {% if reports %}
+      <ul class="tool-list">
+        {% for report in reports %}
+          <li class="tool-item reported-item">
+            <div class="tool-main">
+
+              <!-- Title -->
+              <div class="tool-title">{{ report.post.title }}</div>
+
+              <!-- Image -->
+              {% if report.post.image_url %}
+                <div style="margin: 0.35rem 0;">
+                  <a href="{{ report.post.image_url }}" target="_blank">
+                    <img src="{{ report.post.image_url }}"
+                         alt="{{ report.post.title }}"
+                         style="max-width:180px;border-radius:8px;border:1px solid rgba(51,65,85,0.8);">
+                  </a>
+                </div>
+              {% endif %}
+
+              <!-- Description -->
+              <div class="tool-description">
+                {% if report.post.description %}
+                  {{ report.post.description }}
+                {% else %}
+                  <em>No description provided.</em>
+                {% endif %}
+              </div>
+
+              <!-- Metadata -->
+              <div class="report-meta" style="margin-top:0.35rem;font-size:0.8rem;color:var(--muted);">
+                <div>
+                  <strong>Reported by:</strong>
+                  {% if report.reported_by %}
+                    {{ report.reported_by.username }} ({{ report.reported_by.email }})
+                  {% else %}
+                    <em>Unknown</em>
+                  {% endif %}
+                </div>
+
+                <div>
+                  <strong>Post created:</strong>
+                  {{ report.post.created_at|timezone:"US/Eastern"|date:"M d, Y h:i A" }}
+                </div>
+
+                <div>
+                  <strong>Reported on:</strong>
+                  {{ report.created_at|timezone:"US/Eastern"|date:"M d, Y h:i A" }}
+                </div>
+
+                <div>
+                  <strong>Status:</strong>
+                  {{ report.get_status_display }}
+                </div>
+
+                {% if report.post.status == 'delisted' %}
+                  <div style="margin-top:0.25rem;">
+                    <strong>Post:</strong> <span class="verified-badge">Delisted</span>
+                  </div>
+                {% endif %}
+
+                {% if report.reason %}
+                  <div style="margin-top:0.25rem;">
+                    <strong>Reason:</strong> {{ report.reason }}
+                  </div>
+                {% endif %}
+
+                {% if report.post.price_min or report.post.price_max %}
+                  <div style="margin-top:0.25rem;">
+                    <strong>Price:</strong> {{ report.post.price_display }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="tool-actions" style="display:flex;flex-direction:column;gap:0.4rem;">
+
+              {% if report.status == "open" %}
+                <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="report_id" value="{{ report.id }}">
+                  <input type="hidden" name="action" value="resolve">
+                  <button type="submit" class="btn btn-secondary" style="font-size:0.78rem;">
+                    Mark Resolved
+                  </button>
+                </form>
+              {% endif %}
+
+              {% if report.post.status != 'delisted' %}
+              <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
+                {% csrf_token %}
+                <input type="hidden" name="report_id" value="{{ report.id }}">
+                <input type="hidden" name="action" value="delist">
+                <button type="submit" class="btn btn-secondary" style="font-size:0.78rem;">
+                  Delist Listing
+                </button>
+              </form>
+              {% else %}
+                <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="report_id" value="{{ report.id }}">
+                  <input type="hidden" name="action" value="resolve">
+                  <button type="submit" class="btn btn-secondary" style="font-size:0.78rem;">
+                    Mark Resolved
+                  </button>
+                </form>
+              {% endif %}
+
+              <form method="post" action="{% url 'admin_reports' %}" class="inline-form">
+                {% csrf_token %}
+                <input type="hidden" name="report_id" value="{{ report.id }}">
+                <input type="hidden" name="action" value="ban_user">
+                <button type="submit" class="btn btn-danger" style="font-size:0.78rem;">
+                  Ban User
+                </button>
+              </form>
+
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty-state">No reports under this filter.</p>
+    {% endif %}
+
+  </section>
+</main>
+
+</body>
+</html>

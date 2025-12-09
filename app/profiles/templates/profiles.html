@@ -30,28 +30,101 @@
   <nav class="topbar">
     <div class="topbar-content">
       <!-- Left: Profile Info -->
-      <div class="profile-section">
-        <div class="avatar-container">
-          {% if profile_image_url %}
-            <img src="{{ profile_image_url }}" alt="Profile" class="avatar">
-          {% else %}
-            <div class="avatar-placeholder">
-              <span>No Avatar</span>
-            </div>
-          {% endif %}
+     
+  <div style="display:flex; align-items:center; gap:8px;">
+  <a href="#" class="notification-bell {% if has_unread_messages %}has-unread{% endif %}" onclick="changeIframe('{% url 'message:unread' %}'); return false;">🔔
+    <!-- Fix Bug: Update new message notification-->
+      <span id="bell-count" class="notification-count">
+      {% if has_unread_messages and unread_count %}
+          {{ unread_count }}
+      {% else %}
+          0
+      {% endif %}
+      </span>
+    </a>
+    <a href="{% url 'edit_profile' %}" class="profile-section" style="text-decoration:none; color:inherit;">
+      <div class="avatar-container">
+      {% if profile_image_url %}
+        <img src="{{ profile_image_url }}" alt="Profile" class="avatar">
+      {% else %}
+        <div class="avatar-placeholder">
+          <span>No Avatar</span>
         </div>
-        <div class="profile-info">
-          <div class="username-rating">
-            <h2>@{{ username }}</h2>
-            {% if avg_rating %}
-              <span class="avg-rating">(⭐ {{ avg_rating }}/10)</span>
-            {% else %}
-              <span class="avg-rating">(⭐ No ratings yet)</span>
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <div class="username-rating">
+        <h2>{{ request.user.nickname|default:username }}</h2>
+        {% if avg_rating %}
+        <span class="avg-rating">(⭐ {{ avg_rating }}/10)</span>
+        {% else %}
+        <span class="avg-rating">(⭐ No ratings yet)</span>
+        {% endif %}
+      </div>
+      <span class="verified-badge"> Email Verified</span>
+    </div>
+    </a>
+  </div>
+
+      <!-- payment button-->
+      <!-- {% if request.user.venmo_url or request.user.paypal_url or request.user.other_payment_note %}
+    <div class="payment-links" style="margin-top:16px;">
+        <h3 class="section-title" style="font-size:14px; color:var(--muted); margin-bottom:8px;">
+            Payment / Support
+        </h3>
+
+        <div class="chip-row" style="display:flex; gap:8px; flex-wrap:wrap;">
+
+            {% if request.user.venmo_url %}
+            <a href="{{ request.user.venmo_url }}" target="_blank" rel="noopener"
+               class="chip" style="
+                    padding:6px 12px;
+                    border-radius:999px;
+                    background:var(--accent);
+                    color:#020617;
+                    text-decoration:none;
+                    font-size:13px;
+               ">
+                Venmo
+            </a>
             {% endif %}
-          </div>
-          <span class="verified-badge">✓ Verified</span>
+
+            {% if request.user.paypal_url %}
+            <a href="{{ request.user.paypal_url }}" target="_blank" rel="noopener"
+               class="chip" style="
+                    padding:6px 12px;
+                    border-radius:999px;
+                    background:var(--accent2);
+                    color:#020617;
+                    text-decoration:none;
+                    font-size:13px;
+               ">
+                PayPal
+            </a>
+            {% endif %}
+
+            {% if request.user.other_payment_note %}
+            <span class="chip" style="
+                    padding:6px 12px;
+                    border-radius:999px;
+                    border:1px solid var(--border);
+                    background:transparent;
+                    color:var(--fg);
+                    font-size:13px;
+               ">
+                {{ request.user.other_payment_note }}
+            </span>
+            {% endif %}
+
         </div>
       </div>
+      {% endif %} -->
+      
+      {% if request.user.is_authenticated and is_admin %}
+      <div class="mod-actions">
+        <a href="/accounts/moderator/dashboard/" class="btn btn-moderation">🛠 Moderation Tools</a>
+      </div>
+      {% endif %}
 
       <!-- Right: Action Buttons -->
       <div class="actions-section">
@@ -80,6 +153,41 @@
     function changeIframe(url) {
       document.querySelector('.feed-iframe').src = url;
     }
+    // Fix Bug: Auto-refresh unread message count every few seconds
+    document.addEventListener('DOMContentLoaded', function () {
+      const bellCountSpan = document.getElementById('bell-count');
+      const bellIcon = document.querySelector('.notification-bell');
+      if (!bellCountSpan || !bellIcon) return;
+
+      async function refreshBellCount() {
+        try {
+          const response = await fetch("{% url 'message:unread_count_api' %}", {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+          });
+
+          if (!response.ok) return;
+          const data = await response.json();
+          const count = data.unread_count ?? 0;
+
+          if (count > 0) {
+            bellCountSpan.textContent = count;
+            bellCountSpan.style.display = 'inline-block';
+            bellIcon.classList.add('has-unread');
+          } else {
+            bellCountSpan.textContent = '';
+            bellCountSpan.style.display = 'none';
+            bellIcon.classList.remove('has-unread');
+          }
+        } catch (err) {
+          console.error("Failed to refresh bell count:", err);
+        }
+      }
+
+      // Initial fetch + polling every 5 seconds
+      refreshBellCount();
+      setInterval(refreshBellCount, 5000);
+    });
+
   </script>
 </body>
 </html>
