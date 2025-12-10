@@ -1,3 +1,7 @@
+/* Source / AI Citation
+# AI Use: Generated with ChatGPT 5.1.
+#   Prompt: "change the css to be similar to" + other css file already created*/
+
 * {
   box-sizing: border-box;
 }
@@ -179,6 +183,7 @@ p[style*="color:red"] {
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px 10px;
+  cursor: pointer;
 }
 
 .report-form {

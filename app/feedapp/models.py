@@ -1,3 +1,7 @@
+# Source / AI Citation
+# AI Use: Generated with ChatGPT 5.1.
+#   Prompt: "how do I create the Report data"
+
 from django.db import models
 from django.conf import settings
 from django.db.models import Avg
