@@ -45,7 +45,7 @@ class Post(models.Model):
         related_name='posts',
         null=True
     )
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='uploads/', blank=True, null=True)
     image_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
