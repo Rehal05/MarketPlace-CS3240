@@ -87,11 +87,18 @@ def toggle_availability_view(request, post_id):
 @login_required
 def mark_sold_review(request, post_id, buyer_id):
     post = get_object_or_404(Post, id=post_id, author=request.user)
+
+    if not post.available:
+        messages.error(request, "This item is not available.")
+        return redirect('my_listings')
+
     from django.contrib.auth import get_user_model
     User = get_user_model()
     buyer = get_object_or_404(User, id=buyer_id)
+
     post.mark_sold(buyer)
-    messages.success(request, f"Marked as sold to {buyer.username}.")
+
+    messages.success(request, f"Marked as pending sale to {buyer.username}.")
     return redirect('my_listings')
 
 @login_required
@@ -111,6 +118,18 @@ def edit_post_view(request, post_id):
         form = PostForm(instance=post)
     
     return render(request, 'edit_post.html', {'form': form, 'post': post})
+
+@login_required
+def undo_sale_view(request, post_id):
+    post = get_object_or_404(Post, id=post_id, author=request.user)
+
+    if not post.pending_sale:
+        messages.error(request, "This sale can no longer be undone.")
+        return redirect('my_listings')
+    
+    post.undo_sale()
+    messages.success(request, "Sale undone. Listing is available again.")
+    return redirect('my_listings')
 
 
 #Rating Functionality

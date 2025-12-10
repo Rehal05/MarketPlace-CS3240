@@ -11,12 +11,28 @@
         <div class="post-meta">
           {# Show seller actions or buyer status #}
           {% if request.user.id == post.author_id %}
-            {% if post.sold_to %}
+            {% if post.sold_to and not post.pending_sale %}
               <div class="post-status">
-                <span class="status status-success">Sold to {{ post.sold_to.nickname|default:post.sold_to.username }}</span>
+                <span class="status status-success">
+                  Sold to {{ post.sold_to.nickname|default:post.sold_to.username }}
+                </span>
               </div>
             {% endif %}
-            {% if post.available and not post.sold_to %}
+            {% if post.pending_sale %}
+              <div class="post-status">
+                <span class="status status-warning">
+                  ⏳ Pending sale to {{ post.sold_to.nickname|default:post.sold_to.username }}
+                </span>
+              </div>
+
+              <form method="post" action="{% url 'message:undo_sale' post.id %}" style="display:inline; margin-left:12px;">
+                {% csrf_token %}
+                <button class="post-action btn-warning" type="submit">
+                  Undo Sale
+                </button>
+              </form>
+            {% endif %}
+            {% if post.available and not post.sold_to and not post.pending_sale %}
               <form method="post" action="{% url 'message:post_status' other.id post.id %}" style="display:inline; margin-left:12px;">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="mark_sold" />
@@ -35,8 +51,11 @@
             <div class="post-status">
               {% if post.sold_to and post.sold_to_id == request.user.id %}
                 <span class="status status-success">Sold to you</span>
+              {% elif post.pending_sale %}
+                <span class="status status-warning">⏳ Pending Seller Confirmation</span>
               {% elif post.available and not post.sold_to %}
                 <span class="status status-available">Available</span>
+
               {% else %}
                 <span class="status status-unavailable">Unavailable</span>
               {% endif %}

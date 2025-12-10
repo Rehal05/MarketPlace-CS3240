@@ -1,3 +1,7 @@
+# Source / AI Citation
+# AI Use: Generated with ChatGPT 5.1.
+#   Prompt: "how do I create the Report data"
+
 from django.db import models
 from django.conf import settings
 from django.db.models import Avg
@@ -41,7 +45,7 @@ class Post(models.Model):
         related_name='posts',
         null=True
     )
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='uploads/', blank=True, null=True)
     image_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
@@ -54,6 +58,7 @@ class Post(models.Model):
         default='active',
         help_text='Whether this post is visible in the feed or delisted by moderators.',
     )
+    pending_sale = models.BooleanField(default=False)
 
     available = models.BooleanField(default=True)
 
@@ -90,12 +95,20 @@ class Post(models.Model):
     def mark_unavailable(self):
         """Mark listing as unavailable (instead of deleting)."""
         self.available = False
+        self.pending_sale = False
         self.save()
     
     def mark_sold(self, buyer):
         """Mark listing as sold to a user."""
         self.sold_to = buyer
         self.available = False
+        self.pending_sale = True
+        self.save()
+    
+    def undo_sale(self):
+        self.sold_to = None
+        self.available = True
+        self.pending_sale = False
         self.save()
 
 class Rating(models.Model):
